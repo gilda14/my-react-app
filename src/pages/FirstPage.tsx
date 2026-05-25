@@ -2,28 +2,30 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageTemplate from '../PageTemplate';
 
+
 export default function FirstPage() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [savedEmail, setSavedEmail] = useState('');
-
   const showEmail = () => {
     setSavedEmail(email);
   };
 
+  const [name, setName] = useState('Dave');
+
   const handleNameChange = () => {
     const names = ['Bob', 'Kavin', 'David'];
     const int = Math.floor(Math.random() * 3);
-    return names[int];
+   setName (names[int]);
   };
 
   const handleClick = () => {
-    console.log('you click')
+    console.log('you click it')
   };
 
    const handleClick2 = (name) => {
-    console.log(`${name} was clicked  `)
+    console.log(`${name} was clicked`)
   };
 
    const handleClick3 = (e) => {
@@ -56,9 +58,11 @@ export default function FirstPage() {
 
         <h3>Your email is: {savedEmail}</h3>
 
-        <p>Hello {handleNameChange()}</p>
+          <p onDoubleClick={handleClick}>
+            Hello {name}!
+          </p>
 
-        <button onClick={handleClick}>Click on me</button>
+        <button onClick={handleNameChange}>change name </button>
         <button onClick={() => handleClick2('Dave')}>Click on me2</button>
          <button onClick={(e) => handleClick3(e)}>Click on me3</button>
         <br/>
