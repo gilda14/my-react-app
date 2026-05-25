@@ -1,11 +1,13 @@
-import React from 'react'
+import PageTemplate from '../PageTemplate'
 
-function Header() {
+function Secondpage() {
   return (
+    <PageTemplate>
     <header>
       <h1>Hi everyone </h1>
    </header>
+   </PageTemplate>
   )
 }
 
-export default Header
+export default Secondpage

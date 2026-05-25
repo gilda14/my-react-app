@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import PageTemplate from "../PageTemplate";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -7,9 +8,11 @@ export default function HomePage() {
     navigate("/first-page")
   }
   return (
+    <PageTemplate>
     <div className="div">
       This is the first react page
       <button onClick={handleOnClick}>First Page</button>
     </div>
+    </PageTemplate>
   )
 }
