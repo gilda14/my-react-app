@@ -13,7 +13,7 @@ export default function FirstPage() {
   };
 
   const [name, setName] = useState('Dave');
-
+  const[count , setCount] = useState(0);
   const handleNameChange = () => {
     const names = ['Bob', 'Kavin', 'David'];
     const int = Math.floor(Math.random() * 3);
@@ -21,16 +21,15 @@ export default function FirstPage() {
   };
 
   const handleClick = () => {
-    console.log('you click it')
+    setCount (count +1)
+    setCount (count +1)
+    console.log(count)
   };
 
-   const handleClick2 = (name) => {
-    console.log(`${name} was clicked`)
+   const handleClick2 = () => {
+    console.log(count)
   };
 
-   const handleClick3 = (e) => {
-    console.log(e.target.innerText)
-  };
 
   return (
     <PageTemplate>
@@ -63,8 +62,8 @@ export default function FirstPage() {
           </p>
 
         <button onClick={handleNameChange}>change name </button>
-        <button onClick={() => handleClick2('Dave')}>Click on me2</button>
-         <button onClick={(e) => handleClick3(e)}>Click on me3</button>
+        <button onClick={handleClick}>add number</button>
+       <button onClick={handleClick2}>Click on me3</button>
         <br/>
         <button onClick={() => navigate('/')}>
           Home page
