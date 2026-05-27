@@ -7,9 +7,13 @@ type PageTemplateProps = {
 export default function PageTemplate({children}: PageTemplateProps) {
   return (
     <>
-        <Header/>
+    <div className="header-footer">
+        <Header />
+        </div>
             {children}
+     <div className="header-footer">      
         <Footer/>
+     </div> 
     </>
   );
 }

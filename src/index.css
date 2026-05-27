@@ -110,4 +110,56 @@ code {
   background: var(--code-bg);
 }
 
-.div{background-color: #c084fc;}
+.div{background-color: #f3f4f6;}
+.header-footer{background-color: #5f83ed;
+color: #08060d;
+
+padding-top: 15px;
+padding-bottom: 15px;}
+
+
+ul{
+  width: 100%;
+  list-style: none;
+  padding 0 0.25rem 0.25rem;
+}
+ul li::before{
+  content: "\200B"
+}
+
+.item{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  background-color: #eee;
+}
+.item:first-child{
+  margin: 0;
+}
+item input[type="checkbox"]{
+  text-align: center;
+  width: 2.5rem;
+  width: 48px;
+  height: 2.5rem;
+  height: 48px;
+  cursor:pointer;
+  margin-right: 0.5rem;
+}
+
+.item input [type="checkbox"]:focus + labla {
+  text-decoration: underline;
+}
+.item > lable {
+  font-size: 0.75rem;
+  flex-grow:1;
+}
+.item svg{
+  width: 48px;
+  min-width: 48px;
+  height: 36px;
+  font-size: 1rem;
+  color: steelblue;
+  cursor: pointer;
+}
+
