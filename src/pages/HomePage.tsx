@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import PageTemplate from "../PageTemplate";
 import { useState } from "react";
-type Item={
-  id : number;
+type Item = {
+  id: number;
   checked: boolean;
-  item : string;
+  item: string;
 }
 
 export default function HomePage() {
@@ -27,36 +27,34 @@ export default function HomePage() {
     }
   ]);
 
-  const[newItem, setNewItem] =useState("");
- 
+  const [newItem, setNewItem] = useState("");
+
   function handleOnClick() {
     navigate("/first-page")
   }
 
-
-
-  const handlecheck = (id: any) =>{
+  const handlecheck = (id: any) => {
     const listItems = items.map((item) => item.id === id ?
-    {...item,checked: !item.checked } :item);
+      { ...item, checked: !item.checked } : item);
     setItems(listItems);
-    localStorage.setItem('shoppinglist' ,JSON.stringify(listItems));
+    localStorage.setItem('shoppinglist', JSON.stringify(listItems));
   }
-  const handleDeletet =(id : any) =>{
+  const handleDeletet = (id: any) => {
     const listItems = items.filter((item) => item.id !== id);
     setItems(listItems);
-    localStorage.setItem('shoppinglist' , JSON.stringify(listItems));
+    localStorage.setItem('shoppinglist', JSON.stringify(listItems));
   }
 
-  const handleAddItem = () =>{
+  const handleAddItem = () => {
     if (newItem.trim() === "") return;
-    const newListItem : Item ={
-      id : items.length ? items[items.length -1].id +1 :1,
-      checked : false,
-      item : newItem ,
+    const newListItem: Item = {
+      id: items.length ? items[items.length - 1].id + 1 : 1,
+      checked: false,
+      item: newItem,
     };
-    const listItems = [...items ,newListItem];
+    const listItems = [...items, newListItem];
     setItems(listItems);
-    localStorage.setItem('shoppinglist' , JSON.stringify(listItems));
+    localStorage.setItem('shoppinglist', JSON.stringify(listItems));
     setNewItem("");
 
   }
@@ -68,18 +66,18 @@ export default function HomePage() {
           <ul>
             {items.map((item) => (
               <li className="item" key={item.id}>
-                <input 
+                <input
                   type="checkbox"
-                  onChange={()=> handlecheck(item.id)}
+                  onChange={() => handlecheck(item.id)}
                   checked={item.checked}
                 />
                 <label
-                style = {(item.checked) ? {textDecoration:'line-through'} : null }
-                onDoubleClick={()=> handlecheck(item.id)}
+                  style={(item.checked) ? { textDecoration: 'line-through' } : null}
+                  onDoubleClick={() => handlecheck(item.id)}
                 >{item.item}</label>
-                <button onClick={()=> handleDeletet (item.id)}>Delete</button>
+                <button onClick={() => handleDeletet(item.id)}>Delete</button>
               </li>
-            
+
             ))}
             <li>
               <input
@@ -87,14 +85,14 @@ export default function HomePage() {
                 value={newItem}
                 onChange={(e) => setNewItem(e.target.value)}
               >
-              
+
               </input>
-               <button className="div" onClick={handleAddItem}> Add new item</button>
+              <button className="div" onClick={handleAddItem}> Add new item</button>
             </li>
           </ul>
-         
-      </div>
-      <div>
+
+        </div>
+        <div>
           This is the first react page
           <button onClick={handleOnClick}>First Page</button>
         </div>
