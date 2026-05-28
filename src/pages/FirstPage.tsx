@@ -20,13 +20,13 @@ export default function FirstPage() {
    setName (names[int]);
   };
 
-  const handleClick = () => {
+  function handleClick() {
     setCount (count +1)
     setCount (count +1)
     console.log(count)
   };
 
-   const handleClick2 = () => {
+  const handleClick2 = () => {
     console.log(count)
   };
 
