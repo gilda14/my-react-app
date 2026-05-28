@@ -2,9 +2,15 @@ import { useNavigate } from "react-router-dom";
 import PageTemplate from "../PageTemplate";
 import { useState } from "react";
 
+type Item = {
+  id: number;
+  checked: boolean;
+  item: string;
+};
+
 export default function HomePage() {
   const navigate = useNavigate();
-  const [items, setItems] = useState([
+  const [items, setItems] = useState<Item[]>([
     {
       id: 1,
       checked: true,
@@ -21,11 +27,12 @@ export default function HomePage() {
       item: "Item3",
     },
   ]);
+  const [newItem, setNewItem] = useState("");
 
   function handleOnClick() {
     navigate("/first-page");
   }
-  const handlecheck = (id: any) => {
+  const handlecheck = (id: number) => {
     const listItems = items.map((item) =>
       item.id === id ? { ...item, checked: !item.checked } : item,
     );
@@ -33,10 +40,23 @@ export default function HomePage() {
     localStorage.setItem("shopinglist", JSON.stringify(listItems));
   };
 
-  const handleDelete = (id: any) => {
+  const handleDelete = (id: number) => {
     const listItems = items.filter((item) => item.id !== id);
     setItems(listItems);
     localStorage.setItem("shopinglist", JSON.stringify(listItems));
+  };
+
+  const handleAddItem = () => {
+    if (newItem.trim() === "") return;
+    const newListItem: Item = {
+      id: items.length ? items[items.length - 1].id + 1 : 1,
+      checked: false,
+      item: newItem,
+    };
+    const listItems = [...items, newListItem];
+    setItems(listItems);
+    localStorage.setItem("shopinglist", JSON.stringify(listItems));
+    setNewItem("");
   };
 
   return (
@@ -60,6 +80,14 @@ export default function HomePage() {
               <button onClick={() => handleDelete(item.id)}>Delete</button>
             </li>
           ))}
+          <li>
+            <input
+              type="text"
+              value={newItem}
+              onChange={(e) => setNewItem(e.target.value)}
+            />
+            <button onClick={handleAddItem}>Add More Item </button>
+          </li>
         </ul>
         This is the first react page
         <button onClick={handleOnClick}>First Page</button>
