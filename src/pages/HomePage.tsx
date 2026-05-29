@@ -13,7 +13,7 @@ export default function HomePage() {
   const [items, setItems] = useState<Item[]>([
     {
       id: 1,
-      checked: true,
+      checked: false,
       item: "Item1",
     },
     {
@@ -62,6 +62,7 @@ export default function HomePage() {
   return (
     <PageTemplate>
       <div className="div">
+        <h3>Shopping list </h3>
         <ul>
           {items.map((item) => (
             <li className="item" key={item.id}>
