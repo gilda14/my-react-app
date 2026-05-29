@@ -30,7 +30,7 @@ export default function FirstPage() {
   return (
     <PageTemplate>
       <div className="div">
-        <h2>This is the first react page</h2>
+        <h2>This is Login Page</h2>
 
         <br />
 
@@ -57,7 +57,7 @@ export default function FirstPage() {
 
         {/* Login Section */}
         <div>
-          <h2>Login Page</h2>
+          <h2>Login to the shopping page</h2>
 
           <input
             type="text"
