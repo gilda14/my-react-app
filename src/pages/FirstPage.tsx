@@ -15,8 +15,14 @@ export default function FirstPage() {
   };
 
   const handleLogin = () => {
+    //we have to add code to check user name and password are not empty
+    if (!username || !password) {
+      alert("please input correct username and pass");
+      return;
+    }
     console.log("Username:", username);
     console.log("Password:", password);
+    navigate("/second-page");
 
     // We can add login logic here later
   };
@@ -57,6 +63,7 @@ export default function FirstPage() {
             type="text"
             placeholder="Username"
             value={username}
+            autoComplete="off"
             onChange={(e) => setUsername(e.target.value)}
             style={{
               padding: "10px",
@@ -73,6 +80,7 @@ export default function FirstPage() {
             type="password"
             placeholder="Password"
             value={password}
+            autoComplete="new-password"
             onChange={(e) => setPassword(e.target.value)}
             style={{
               padding: "10px",
