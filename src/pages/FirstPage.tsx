@@ -8,67 +8,84 @@ export default function FirstPage() {
 
   const [email, setEmail] = useState('');
   const [savedEmail, setSavedEmail] = useState('');
-  const showEmail = () => {
+  const [username , setUsername] = useState("");
+   const [password, setPassword] = useState("");
+   const showEmail =() =>{
     setSavedEmail(email);
-  };
+   };
 
-  const [name, setName] = useState('Dave');
-  const[count , setCount] = useState(0);
-  const handleNameChange = () => {
-    const names = ['Bob', 'Kavin', 'David'];
-    const int = Math.floor(Math.random() * 3);
-   setName (names[int]);
-  };
+   const handleLogin =() =>{
+    if (username ==="" || password===""){
+      alert("Please insert correct usename or password ");
+      return;
+    }
+    console.log("Username:" , username);
+    console.log("Password", password);
+    navigate("/second-page");
+    //we can add more login logic here latter
+   };
 
-  function handleClick() {
-    setCount (count +1)
-    setCount (count +1)
-    console.log(count)
-  };
+   return (
+      <PageTemplate>
+        <div className='div'>
+          <h2>This is loging page</h2>
+          <br/>
+          {/*Email Input*/}
+          <input
+            type='email'
+            placeholder='Enter your Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{
+              padding: "10px",
+              borderRadius : "8px",
+              border: "1px solid gray",
+              width : "250px"
+            }}
+          />
+          <button onClick={showEmail}> Show Email</button>
+          <h3>Your Email is {savedEmail}</h3>
+          <br/>
+          <hr/>
 
-  const handleClick2 = () => {
-    console.log(count)
-  };
+          {/*Login Input */}
+          <div>
+            <h2>Login to the shopping page</h2>
+            <input
+              type='text'
+              placeholder='Username'
+              value={username}
+              autoComplete='off'
+              onChange={(e)=> setUsername(e.target.value)}
+              style={{
+                 padding: "10px",
+              borderRadius : "8px",
+              border: "1px solid gray",
+              width : "250px",
+              marginBottom:"10px"
+              }}
+            />
+            <br/>
+            <input
+              type='password'
+              placeholder='Password'
+              value={password}
+              autoComplete='new-password'
+              onChange={(e)=> setPassword(e.target.value)}
+              style={{
+                 padding: "10px",
+              borderRadius : "8px",
+              border: "1px solid gray",
+              width : "250px",
+              marginBottom:"10px"
+              }}
+              />
+              <button onClick={handleLogin}>Login</button>
+          </div>
+<br/>
+              <button onClick={()=> navigate("/")}>HomePage</button>
+        </div>
+      </PageTemplate>
 
-
-  return (
-    <PageTemplate>
-      <div className="div">
-        <h2>This is the first react page</h2>
-
-        <br />
-
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            padding: '10px',
-            borderRadius: '8px',
-            border: '1px solid gray',
-            width: '250px',
-          }}
-        />
-
-        <button onClick={showEmail}>
-          Show Email
-        </button>
-
-        <h3>Your email is: {savedEmail}</h3>
-
-          <p onDoubleClick={handleClick}>
-            Hello {name}!
-          </p>
-
-        <button onClick={handleNameChange}>change name </button>
-        <button onClick={handleClick}>add number</button>
-       <button onClick={handleClick2}>Click on me3</button>
-        <br/>
-        <button onClick={() => navigate('/')}>
-          Home page
-        </button>
-      </div>
-    </PageTemplate>
-  );
-}
+   );
+  }
