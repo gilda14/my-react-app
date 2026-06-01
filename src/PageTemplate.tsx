@@ -2,18 +2,18 @@ import type { ReactNode } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 type PageTemplateProps = {
-    children: ReactNode
+  children: ReactNode
 }
-export default function PageTemplate({children}: PageTemplateProps) {
+export default function PageTemplate({ children }: PageTemplateProps) {
   return (
     <>
-    <div className="header-footer">
+      <div className="header-footer">
         <Header />
-        </div>
-            {children}
-     <div className="header-footer">      
-        <Footer/>
-     </div> 
+      </div>
+      {children}
+      <div className="header-footer">
+        <Footer />
+      </div>
     </>
   );
 }

@@ -1,10 +1,10 @@
 
 
 const Footer = () => {
-    const today = new Date();
+  const today = new Date();
   return (
     <footer>
-        <p>copyright @{today.getFullYear()} </p>
+      <p>copyright @{today.getFullYear()} </p>
     </footer>
   )
 }

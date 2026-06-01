@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/first-page" element={<FirstPage />} />
         <Route path="/" element={<HomePage />} />
-        <Route path='/second-page' element={<Secondpage/>}/>
+        <Route path='/second-page' element={<Secondpage />} />
       </Routes>
     </>
   );

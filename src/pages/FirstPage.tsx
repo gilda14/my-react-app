@@ -15,7 +15,7 @@ export default function FirstPage() {
    };
 
    const handleLogin =() =>{
-    if (username ==="" || password===""){
+    if (username === "" || password===""){
       alert("Please insert correct usename or password ");
       return;
     }

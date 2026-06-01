@@ -77,20 +77,24 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
+
   @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
@@ -110,51 +114,61 @@ code {
   background: var(--code-bg);
 }
 
-.div{background-color: #f3f4f6;}
-.header-footer{background-color: #5f83ed;
-color: #08060d;
+.div {
+  background-color: #f3f4f6;
+}
 
-padding-top: 15px;
-padding-bottom: 15px;}
+.header-footer {
+  background-color: #5f83ed;
+  color: #08060d;
+
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
 
 
-ul{
+ul {
   width: 57%;
   list-style: none;
   padding 0 0.25rem 0.25rem;
 }
-ul li::before{
+
+ul li::before {
   content: "\200B"
 }
 
-.item{
+.item {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   padding: 0.5rem 0 0.5rem 0.5rem;
   background-color: #eee;
 }
-.item:first-child{
+
+.item:first-child {
   margin: 0;
 }
-item input[type="checkbox"]{
+
+item input[type="checkbox"] {
   text-align: center;
   width: 2.5rem;
   width: 48px;
   height: 2.5rem;
   height: 48px;
-  cursor:pointer;
+  cursor: pointer;
   margin-right: 0.5rem;
 }
 
-.item input [type="checkbox"]:focus + labla {
+.item input [type="checkbox"]:focus+labla {
   text-decoration: underline;
 }
-.item > lable {
+
+.item>lable {
   font-size: 0.75rem;
-  flex-grow:1;
+  flex-grow: 1;
 }
-.item svg{
+
+.item svg {
   width: 48px;
   min-width: 48px;
   height: 36px;
@@ -162,4 +176,3 @@ item input[type="checkbox"]{
   color: steelblue;
   cursor: pointer;
 }
-
