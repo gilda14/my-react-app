@@ -1,6 +1,6 @@
 import PageTemplate from "../PageTemplate";
 import { useNavigate } from "react-router-dom";
-
+import SearchItem from "../components/SearchItem";
 import { useState } from "react";
 {
   /*
@@ -44,7 +44,8 @@ export default function Secondpage() {
       item: "Item3",
     },
   ]);
-  const [newItem, setNewItem] = useState("");
+  const [newItem, setNewItem] = useState("")
+  const [search, setSearch] = useState("")
 
   function handleOnClick() {
     navigate("/first-page");
@@ -81,7 +82,11 @@ export default function Secondpage() {
       <div className="div">
         <h3>Shopping list </h3>
         <ul>
-          {items.map((item) => (
+          <li><SearchItem
+            setSearch={setSearch}
+          />
+          </li>
+          {items.filter((item) => item.item.toLowerCase().includes(search.toLocaleLowerCase())).map((item) => (
             <li className="item" key={item.id}>
               <input
                 type="checkbox"
@@ -105,6 +110,8 @@ export default function Secondpage() {
               onChange={(e) => setNewItem(e.target.value)}
             />
             <button onClick={handleAddItem}>Add More Item </button>
+            <br />
+
           </li>
         </ul>
 
