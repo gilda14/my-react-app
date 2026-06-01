@@ -1,6 +1,7 @@
 import React from 'react'
 
 interface SearchItemProps {
+  search: String;
   setSearch: any
 }
 
@@ -13,7 +14,8 @@ function SearchItem({ setSearch }: SearchItemProps) {
         type='text'
         role='searchbox'
         placeholder='search Item'
-        onChange={(event: any) => setSearch(event.target.value)}
+        //onChange={(event: any) => setSearch(event.target.value)}
+        onChangeCapture={(e) =>setSearch(e.target.value)}
       />
 
     </form>
