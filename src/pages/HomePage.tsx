@@ -4,7 +4,7 @@ import PageTemplate from "../PageTemplate";
 export default function HomePage() {
   const navigate = useNavigate();
   function handleOnClick() {
-    navigate("/first-page");
+    navigate("/first-page")
   }
 
   return (
@@ -15,5 +15,5 @@ export default function HomePage() {
         <button onClick={handleOnClick}>First Page</button>
       </div>
     </PageTemplate>
-  );
+  )
 }
