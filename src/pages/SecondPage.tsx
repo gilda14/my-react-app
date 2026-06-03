@@ -1,13 +1,18 @@
 import PageTemplate from "../PageTemplate";
 import { useNavigate } from "react-router-dom";
 import SearchItem from "../components/SearchItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Product = {
   id: number;
   name: string;
   price: number;
   picture: string;
+};
+
+type ShoppingItem = {
+  id: string;
+  item: Product;
 };
 
 export default function Secondpage() {
@@ -18,26 +23,33 @@ export default function Secondpage() {
       id: 1,
       name: "Apple",
       price: 2.99,
-      picture: "",
+      picture: "/hero.png",
     },
     {
       id: 2,
       name: "Milk",
       price: 4.5,
-      picture: "",
+      picture: "/hero.png",
     },
     {
       id: 3,
       name: "Bread",
       price: 3.25,
-      picture: "",
+      picture: "/hero.png",
     },
   ]);
   //new  shopping list
   // const [newName, setNewName] = useState("");
   // const [newPrice, setNewPrice] = useState("");
   // const [newPicture, setNewPicture] = useState("");
-  const [shoppingList, setShoppingList] = useState<Product[]>([]);
+  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(() => {
+    const savedList = localStorage.getItem("shoppingList");
+    return savedList ? JSON.parse(savedList) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("shoppingList", JSON.stringify(shoppingList));
+  }, [shoppingList]);
 
   function handleOnClick() {
     navigate("/first-page");
@@ -67,20 +79,30 @@ export default function Secondpage() {
 
   //Add Item to the shopping list
   function handAddToList(product: Product) {
-    setShoppingList([...shoppingList, product]);
+    setShoppingList([
+      ...shoppingList,
+      {
+        id: crypto.randomUUID(),
+        item: product,
+      },
+    ]);
   }
 
   //delete item from shopping list
-  function handleDeleteItem(id: number) {
-    setShoppingList(shoppingList.filter((product) => product.id !== id));
+  function handleDeleteItem(id: string) {
+    setShoppingList(shoppingList.filter((item) => item.id !== id));
   }
+
+  function handleGoToShoppingList() {
+    navigate("/shopping-Page", { state: { shoppingList } });
+  }
+
   return (
     <PageTemplate>
       <div className="div">
         <h3>All Products</h3>
 
         <SearchItem setSearch={setSearch} />
-
         <div>
           {products
             .filter((product) =>
@@ -91,6 +113,8 @@ export default function Secondpage() {
                 <h4>{product.name}</h4>
 
                 <p>${product.price}</p>
+
+                <img src={product.picture} />
 
                 <button onClick={() => handAddToList(product)}>
                   Add to the shopping list
@@ -122,23 +146,28 @@ export default function Secondpage() {
 
         <button onClick={handleAddProduct}>Add Product</button> */}
 
-        <h4>New Shopping List </h4>
+        {/* <h4>New Shopping List </h4>
+        
         <div>
           {shoppingList.length === 0 ? (
             <p>You dont have anything in your shopping list yet</p>
           ) : (
-            shoppingList.map((product) => (
-              <div className="item" key={product.id}>
-                <h4>{product.name}</h4>
-                <p>${product.price}</p>
-                <button onClick={() => handleDeleteItem(product.id)}>
+            shoppingList.map((item) => (
+              <div className="item" key={item.id}>
+                <h4>{item.item.name}</h4>
+                <p>${item.item.price}</p>
+                <button onClick={() => handleDeleteItem(item.id)}>
                   Delete
                 </button>
               </div>
             ))
           )}
-        </div>
+        </div> */}
+        <button onClick={() => handleGoToShoppingList()}>
+          Go to Shopping List Page
+        </button>
 
+        <br />
         <button onClick={handleOnClick}>Log out</button>
       </div>
     </PageTemplate>
