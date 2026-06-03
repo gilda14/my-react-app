@@ -40,6 +40,15 @@ export default function ShoppingPage() {
         ) : (
           shoppingList.map((item) => (
             <div className="item" key={item.id}>
+              <img
+                src={item.item.picture}
+                style={{
+                  width: "35px",
+                  height: "35px",
+                  marginLeft: "20px",
+                  marginRight: "20px",
+                }}
+              />
               <h4>{item.item.name}</h4>
 
               <p>${item.item.price}</p>

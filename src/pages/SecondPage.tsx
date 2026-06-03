@@ -23,19 +23,19 @@ export default function Secondpage() {
       id: 1,
       name: "Apple",
       price: 2.99,
-      picture: "/hero.png",
+      picture: "/apple.png",
     },
     {
       id: 2,
       name: "Milk",
       price: 4.5,
-      picture: "/hero.png",
+      picture: "/milk.png",
     },
     {
       id: 3,
       name: "Bread",
       price: 3.25,
-      picture: "/hero.png",
+      picture: "/bread.png",
     },
   ]);
   //new  shopping list
@@ -110,11 +110,25 @@ export default function Secondpage() {
             )
             .map((product) => (
               <div className="item" key={product.id}>
+                <img
+                  src={product.picture}
+                  style={{
+                    width: "35px",
+                    height: "35px",
+                    marginLeft: "20px",
+                    marginRight: "20px",
+                  }}
+                />
                 <h4>{product.name}</h4>
 
-                <p>${product.price}</p>
-
-                <img src={product.picture} />
+                <p
+                  style={{
+                    marginLeft: "10px",
+                    marginRight: "10px",
+                  }}
+                >
+                  ${product.price}
+                </p>
 
                 <button onClick={() => handAddToList(product)}>
                   Add to the shopping list
