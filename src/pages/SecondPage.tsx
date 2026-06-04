@@ -13,6 +13,7 @@ type Product = {
 type ShoppingItem = {
   id: string;
   item: Product;
+  quantity: number;
 };
 
 export default function Secondpage() {
@@ -79,19 +80,34 @@ export default function Secondpage() {
 
   //Add Item to the shopping list
   function handAddToList(product: Product) {
-    setShoppingList([
-      ...shoppingList,
-      {
-        id: crypto.randomUUID(),
-        item: product,
-      },
-    ]);
+    const existingItem = shoppingList.find(
+      (item) => item.item.id === product.id,
+    );
+
+    if (existingItem) {
+      setShoppingList(
+        shoppingList.map((item) =>
+          item.item.id === product.id
+            ? { ...item, quantity: (item.quantity || 0) + 1 }
+            : item,
+        ),
+      );
+    } else {
+      setShoppingList([
+        ...shoppingList,
+        {
+          id: crypto.randomUUID(),
+          item: product,
+          quantity: 1,
+        },
+      ]);
+    }
   }
 
   //delete item from shopping list
-  function handleDeleteItem(id: string) {
-    setShoppingList(shoppingList.filter((item) => item.id !== id));
-  }
+  // function handleDeleteItem(id: string) {
+  //   setShoppingList(shoppingList.filter((item) => item.id !== id));
+  // }
 
   function handleGoToShoppingList() {
     navigate("/shopping-Page", { state: { shoppingList } });

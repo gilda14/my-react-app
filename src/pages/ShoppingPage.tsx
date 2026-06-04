@@ -1,6 +1,7 @@
 import PageTemplate from "../PageTemplate";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { FaTrashAlt } from "react-icons/fa";
 
 type Product = {
   id: number;
@@ -12,6 +13,7 @@ type Product = {
 type ShoppingItem = {
   id: string;
   item: Product;
+  quantity: number;
 };
 
 export default function ShoppingPage() {
@@ -26,7 +28,20 @@ export default function ShoppingPage() {
     const updatedList = shoppingList.filter((item) => item.id !== id);
 
     setShoppingList(updatedList);
+    localStorage.setItem("shoppingList", JSON.stringify(updatedList));
+  }
 
+  function handleDecreaseQuantity(id: string) {
+    const updatedList = shoppingList.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            quantity: Math.max(item.quantity - 1, 1),
+          }
+        : item,
+    );
+
+    setShoppingList(updatedList);
     localStorage.setItem("shoppingList", JSON.stringify(updatedList));
   }
 
@@ -42,6 +57,7 @@ export default function ShoppingPage() {
             <div className="item" key={item.id}>
               <img
                 src={item.item.picture}
+                alt={item.item.name}
                 style={{
                   width: "35px",
                   height: "35px",
@@ -49,11 +65,34 @@ export default function ShoppingPage() {
                   marginRight: "20px",
                 }}
               />
+
               <h4>{item.item.name}</h4>
 
               <p>${item.item.price}</p>
 
-              <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
+              <p>Quantity: {item.quantity}</p>
+
+              <button
+                onClick={() => handleDecreaseQuantity(item.id)}
+                style={{
+                  cursor: "pointer",
+                  padding: "8px",
+                  marginRight: "10px",
+                }}
+              >
+                -
+              </button>
+
+              <button
+                onClick={() => handleDeleteItem(item.id)}
+                style={{
+                  cursor: "pointer",
+                  padding: "8px",
+                  border: "none",
+                }}
+              >
+                <FaTrashAlt style={{ color: "black", fontSize: "10px" }} />
+              </button>
             </div>
           ))
         )}
