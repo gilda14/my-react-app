@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTemplate from "../PageTemplate";
-import { FaTrashAlt } from "react-icons/fa"; // Import the icon
+import { FaTrashAlt } from "react-icons/fa";
 
 export default function FirstPage() {
   const navigate = useNavigate();
@@ -80,7 +80,6 @@ export default function FirstPage() {
           <button onClick={handleLogin}>Login</button>
         </div>
         <br />
-        <button onClick={() => navigate("/")}>HomePage</button>
 
         <button>
           <FaTrashAlt /> Remove Item

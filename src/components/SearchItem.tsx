@@ -1,24 +1,13 @@
-import React from "react";
+type SearchItemProps = {
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
+};
 
-interface SearchItemProps {
-  search: String;
-  setSearch: any;
-}
-
-function SearchItem({ setSearch }: SearchItemProps) {
+export default function SearchItem({ setSearch }: SearchItemProps) {
   return (
-    <form className="searchForm" onSubmit={(e) => e.preventDefault()}>
-      <label htmlFor="search"> </label>
-      <input
-        id="search"
-        type="text"
-        role="searchbox"
-        placeholder="search Item"
-        //onChange={(event: any) => setSearch(event.target.value)}
-        onChangeCapture={(e) => setSearch(e.target.value)}
-      />
-    </form>
+    <input
+      type="text"
+      placeholder="Search"
+      onChange={(e) => setSearch(e.target.value)}
+    />
   );
 }
-
-export default SearchItem;
