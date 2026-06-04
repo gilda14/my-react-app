@@ -2,6 +2,8 @@ import PageTemplate from "../PageTemplate";
 import { useNavigate } from "react-router-dom";
 import SearchItem from "../components/SearchItem";
 import { useEffect, useState } from "react";
+import { FaShoppingCart } from "react-icons/fa"; // Import the icon
+import { FaSearch } from "react-icons/fa";
 
 type Product = {
   id: number;
@@ -117,8 +119,26 @@ export default function Secondpage() {
     <PageTemplate>
       <div className="div">
         <h3>All Products</h3>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <FaSearch />
+          <SearchItem setSearch={setSearch} />
+        </div>
 
-        <SearchItem setSearch={setSearch} />
+        <button
+          onClick={() => handleGoToShoppingList()}
+          style={{
+            float: "right",
+            marginTop: "25px",
+            marginLeft: "10px",
+            marginRight: "10px",
+          }}
+        >
+          <FaShoppingCart />
+        </button>
+        <br />
+        <button onClick={handleOnClick} style={{ float: "right" }}>
+          Log out
+        </button>
         <div>
           {products
             .filter((product) =>
@@ -152,7 +172,6 @@ export default function Secondpage() {
               </div>
             ))}
         </div>
-
         {/* <input
           type="text"
           placeholder="Product name"
@@ -175,7 +194,6 @@ export default function Secondpage() {
         />
 
         <button onClick={handleAddProduct}>Add Product</button> */}
-
         {/* <h4>New Shopping List </h4>
         
         <div>
@@ -193,12 +211,6 @@ export default function Secondpage() {
             ))
           )}
         </div> */}
-        <button onClick={() => handleGoToShoppingList()}>
-          Go to Shopping List Page
-        </button>
-
-        <br />
-        <button onClick={handleOnClick}>Log out</button>
       </div>
     </PageTemplate>
   );
