@@ -1,0 +1,108 @@
+/* Button.module.css */
+.button {
+  --bg: #000000;
+  --bg-hover: #111111;
+  --text: #ffffff;
+  --border: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--bg);
+  color: var(--text);
+
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+
+  box-shadow: 0 8px 20px rgb(37 99 235 / 0.25);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.button:hover {
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgb(37 99 235 / 0.32);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgb(37 99 235 / 0.22);
+}
+
+.button:focus-visible {
+  outline: 3px solid rgb(37 99 235 / 0.35);
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Variants */
+.primary {
+  --bg: #000000;
+  --bg-hover: #1d4ed8;
+  --text: #ffffff;
+}
+
+.secondary {
+  --bg: #f1f5f9;
+  --bg-hover: #e2e8f0;
+  --text: #0f172a;
+  --border: #cbd5e1;
+  box-shadow: none;
+}
+
+.danger {
+  --bg: #dc2626;
+  --bg-hover: #b91c1c;
+  --text: #ffffff;
+  box-shadow: 0 8px 20px rgb(220 38 38 / 0.25);
+}
+
+.ghost {
+  --bg: transparent;
+  --bg-hover: #f1f5f9;
+  --text: #0f172a;
+  --border: transparent;
+  box-shadow: none;
+}
+
+/* Sizes */
+.sm {
+  height: 1.25rem;
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+}
+
+.md {
+  height: 1.75rem;
+  padding: 0 1.125rem;
+  font-size: 14px;
+}
+
+.lg {
+  height: 3.25rem;
+  padding: 0 1.5rem;
+  font-size: 1rem;
+}
+
+.fullWidth {
+  width: 100%;
+}

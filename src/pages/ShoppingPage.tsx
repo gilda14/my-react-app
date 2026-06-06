@@ -2,6 +2,8 @@ import PageTemplate from "../PageTemplate";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
+import Button from "../components/Button";
+import DecreaseButton from "../components/DecreaseButton";
 
 type Product = {
   id: number;
@@ -44,7 +46,6 @@ export default function ShoppingPage() {
     setShoppingList(updatedList);
     localStorage.setItem("shoppingList", JSON.stringify(updatedList));
   }
-
   return (
     <PageTemplate>
       <div className="div">
@@ -65,23 +66,19 @@ export default function ShoppingPage() {
                   marginRight: "20px",
                 }}
               />
-
               <h4>{item.item.name}</h4>
 
               <p>${item.item.price}</p>
 
               <p>Quantity: {item.quantity}</p>
 
-              <button
-                onClick={() => handleDecreaseQuantity(item.id)}
-                style={{
-                  cursor: "pointer",
-                  padding: "8px",
-                  marginRight: "10px",
-                }}
-              >
-                -
-              </button>
+              <p>Quantity: {item.quantity}</p>
+
+              <DecreaseButton
+                value={item.quantity}
+                min={1}
+                onChange={() => handleDecreaseQuantity(item.id)}
+              />
 
               <button
                 onClick={() => handleDeleteItem(item.id)}
@@ -97,7 +94,7 @@ export default function ShoppingPage() {
           ))
         )}
 
-        <button onClick={() => navigate("/second-page")}>Back</button>
+        <Button onClick={() => navigate("/second-page")}>Back</Button>
       </div>
     </PageTemplate>
   );

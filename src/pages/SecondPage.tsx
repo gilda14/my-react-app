@@ -4,6 +4,7 @@ import SearchItem from "../components/SearchItem";
 import { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa"; // Import the icon
 import { FaSearch } from "react-icons/fa";
+import Button from "../components/Button";
 
 type Product = {
   id: number;
@@ -124,21 +125,13 @@ export default function Secondpage() {
           <SearchItem setSearch={setSearch} />
         </div>
 
-        <button
-          onClick={() => handleGoToShoppingList()}
-          style={{
-            float: "right",
-            marginTop: "25px",
-            marginLeft: "10px",
-            marginRight: "10px",
-          }}
-        >
+        <Button onClick={() => handleGoToShoppingList()}>
           <FaShoppingCart />
-        </button>
+        </Button>
         <br />
-        <button onClick={handleOnClick} style={{ float: "right" }}>
+        <Button onClick={handleOnClick} style={{ float: "right" }}>
           Log out
-        </button>
+        </Button>
         <div>
           {products
             .filter((product) =>
@@ -166,9 +159,9 @@ export default function Secondpage() {
                   ${product.price}
                 </p>
 
-                <button onClick={() => handAddToList(product)}>
+                <Button onClick={() => handAddToList(product)}>
                   Add to the shopping list
-                </button>
+                </Button>
               </div>
             ))}
         </div>

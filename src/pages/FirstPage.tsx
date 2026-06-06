@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTemplate from "../PageTemplate";
-import { FaTrashAlt } from "react-icons/fa";
+import Button from "../components/Button";
 
 export default function FirstPage() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [savedEmail, setSavedEmail] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [savedEmail, setSavedEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const showEmail = () => {
-    setSavedEmail(email);
-  };
+  // const showEmail = () => {
+  //   setSavedEmail(email);
+  // };
 
   const handleLogin = () => {
     if (username === "" || password === "") {
@@ -25,10 +25,8 @@ export default function FirstPage() {
   return (
     <PageTemplate>
       <div className="div">
-        <h2>This is loging page</h2>
-        <br />
         {/*Email Input*/}
-        <input
+        {/* <input
           type="email"
           placeholder="Enter your Email"
           value={email}
@@ -43,8 +41,8 @@ export default function FirstPage() {
         <button onClick={showEmail}> Show Email</button>
         <h3>Your Email is {savedEmail}</h3>
         <br />
-        <hr />
-
+        <hr /> */}
+        <Button onClick={() => navigate("/")}>Home Page</Button>
         {/*Login Input */}
         <div>
           <h2>Login to the shopping page</h2>
@@ -77,13 +75,9 @@ export default function FirstPage() {
               marginBottom: "10px",
             }}
           />
-          <button onClick={handleLogin}>Login</button>
+          <br />
+          <Button onClick={handleLogin}>Login</Button>
         </div>
-        <br />
-
-        <button>
-          <FaTrashAlt /> Remove Item
-        </button>
       </div>
     </PageTemplate>
   );
