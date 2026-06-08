@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTemplate from "../PageTemplate";
 import Button from "../components/Button";
+import Input from "../components/Input";
 
 export default function FirstPage() {
   const navigate = useNavigate();
@@ -46,34 +47,20 @@ export default function FirstPage() {
         {/*Login Input */}
         <div>
           <h2>Login to the shopping page</h2>
-          <input
+          <Input
             type="text"
             placeholder="Username"
             value={username}
             autoComplete="off"
-            onChange={(e) => setUsername(e.target.value)}
-            style={{
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid gray",
-              width: "250px",
-              marginBottom: "10px",
-            }}
+            onChange={setUsername}
           />
           <br />
-          <input
+          <Input
             type="password"
             placeholder="Password"
             value={password}
             autoComplete="new-password"
-            onChange={(e) => setPassword(e.target.value)}
-            style={{
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid gray",
-              width: "250px",
-              marginBottom: "10px",
-            }}
+            onChange={setPassword}
           />
           <br />
           <Button onClick={handleLogin}>Login</Button>

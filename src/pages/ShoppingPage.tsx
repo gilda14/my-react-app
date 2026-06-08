@@ -68,11 +68,9 @@ export default function ShoppingPage() {
               />
               <h4>{item.item.name}</h4>
 
-              <p>${item.item.price}</p>
+              <p style={{ paddingLeft: "10px" }}> ${item.item.price}</p>
 
-              <p>Quantity: {item.quantity}</p>
-
-              <p>Quantity: {item.quantity}</p>
+              <p style={{ paddingLeft: "50px" }}>{item.quantity}</p>
 
               <DecreaseButton
                 value={item.quantity}
