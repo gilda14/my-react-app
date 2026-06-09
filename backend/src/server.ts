@@ -39,6 +39,19 @@ app.post("/register", async (req, res) => {
   }
 });
 
+
+
+app.get("/test-register", async (req, res) => {
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
+  const result = await pool.query(
+    "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username",
+    ["testuser2", hashedPassword]
+  );
+
+  res.json(result.rows[0]);
+});
+
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
 });
