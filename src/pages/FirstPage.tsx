@@ -11,9 +11,39 @@ export default function FirstPage() {
   // const [savedEmail, setSavedEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const showEmail = () => {
-  //   setSavedEmail(email);
-  // };
+  const handleRegister = async () => {
+    if (username === "" || password === "") {
+      alert("Please enter a username and password");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("User registered successfully!");
+        console.log(data);
+
+        setUsername("");
+        setPassword("");
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to server");
+    }
+  };
 
   const handleLogin = () => {
     if (username === "" || password === "") {
@@ -64,6 +94,9 @@ export default function FirstPage() {
           />
           <br />
           <Button onClick={handleLogin}>Login</Button>
+
+          <br />
+          <Button onClick={() => navigate("/register")}>Register</Button>
         </div>
       </div>
     </PageTemplate>

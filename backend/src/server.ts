@@ -9,13 +9,8 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT NOW()");
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Database connection failed");
-  }
+  const result = await pool.query("SELECT NOW()");
+  res.json(result.rows);
 });
 
 app.post("/register", async (req, res) => {
@@ -51,6 +46,8 @@ app.get("/test-register", async (req, res) => {
 
   res.json(result.rows[0]);
 });
+
+
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
