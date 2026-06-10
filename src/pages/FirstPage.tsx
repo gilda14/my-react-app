@@ -31,6 +31,12 @@ export default function FirstPage() {
       const data = await response.json();
 
       if (response.ok) {
+        const newUser = {
+          id: crypto.randomUUID(),
+          username: username,
+        };
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+
         alert("User registered successfully!");
         console.log(data);
 

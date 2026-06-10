@@ -16,11 +16,16 @@ type ShoppingItem = {
   id: string;
   item: Product;
   quantity: number;
+  userId: string;
 };
 
 export default function ShoppingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const currentUser = JSON.parse(
+    localStorage.getItem("currentUser") || "{}",
+  ) as { id: string; username: string };
 
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(
     location.state?.shoppingList || [],
@@ -30,7 +35,10 @@ export default function ShoppingPage() {
     const updatedList = shoppingList.filter((item) => item.id !== id);
 
     setShoppingList(updatedList);
-    localStorage.setItem("shoppingList", JSON.stringify(updatedList));
+    localStorage.setItem(
+      `shoppingList_${currentUser.id}`,
+      JSON.stringify(updatedList),
+    );
   }
 
   function handleDecreaseQuantity(id: string) {

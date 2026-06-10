@@ -17,10 +17,12 @@ type ShoppingItem = {
   id: string;
   item: Product;
   quantity: number;
+  userId: string;
 };
 
 export default function Secondpage() {
   const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
   const [search, setSearch] = useState("");
   const [products] = useState<Product[]>([
     {
@@ -47,13 +49,21 @@ export default function Secondpage() {
   // const [newPrice, setNewPrice] = useState("");
   // const [newPicture, setNewPicture] = useState("");
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(() => {
-    const savedList = localStorage.getItem("shoppingList");
+    if (!currentUser) return [];
+
+    const savedList = localStorage.getItem(`shoppingList_${currentUser.id}`);
+
     return savedList ? JSON.parse(savedList) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem("shoppingList", JSON.stringify(shoppingList));
-  }, [shoppingList]);
+    if (!currentUser) return;
+
+    localStorage.setItem(
+      `shoppingList_${currentUser.id}`,
+      JSON.stringify(shoppingList),
+    );
+  }, [shoppingList, currentUser]);
 
   function handleOnClick() {
     navigate("/first-page");
@@ -99,7 +109,8 @@ export default function Secondpage() {
       setShoppingList([
         ...shoppingList,
         {
-          id: crypto.randomUUID(),
+          id: Date.now().toString(),
+          userId: currentUser.id,
           item: product,
           quantity: 1,
         },
