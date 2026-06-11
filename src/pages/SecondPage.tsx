@@ -93,6 +93,8 @@ export default function Secondpage() {
 
   //Add Item to the shopping list
   function handAddToList(product: Product) {
+    console.log("currentUser:", currentUser);
+    console.log("shopping key:", `shoppingList_${currentUser.id}`);
     const existingItem = shoppingList.find(
       (item) => item.item.id === product.id,
     );
@@ -109,7 +111,7 @@ export default function Secondpage() {
       setShoppingList([
         ...shoppingList,
         {
-          id: Date.now().toString(),
+          id: crypto.randomUUID(),
           userId: currentUser.id,
           item: product,
           quantity: 1,

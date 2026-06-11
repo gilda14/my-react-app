@@ -53,12 +53,19 @@ export default function FirstPage() {
 
   const handleLogin = () => {
     if (username === "" || password === "") {
-      alert("Please insert correct usename or password ");
+      alert("Please insert correct username or password");
       return;
     }
+
+    const currentUser = {
+      id: username,
+      username: username,
+    };
+
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
     navigate("/second-page");
   };
-
   return (
     <PageTemplate>
       <div className="div">

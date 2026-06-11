@@ -1,5 +1,5 @@
 import PageTemplate from "../PageTemplate";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import Button from "../components/Button";
@@ -21,17 +21,19 @@ type ShoppingItem = {
 
 export default function ShoppingPage() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const currentUser = JSON.parse(
-    localStorage.getItem("currentUser") || "{}",
-  ) as { id: string; username: string };
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
 
-  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(
-    location.state?.shoppingList || [],
-  );
+  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(() => {
+    if (!currentUser) return [];
+
+    const savedList = localStorage.getItem(`shoppingList_${currentUser.id}`);
+    return savedList ? JSON.parse(savedList) : [];
+  });
 
   function handleDeleteItem(id: string) {
+    if (!currentUser) return;
+
     const updatedList = shoppingList.filter((item) => item.id !== id);
 
     setShoppingList(updatedList);
@@ -42,24 +44,29 @@ export default function ShoppingPage() {
   }
 
   function handleDecreaseQuantity(id: string) {
+    if (!currentUser) return;
+
     const updatedList = shoppingList.map((item) =>
       item.id === id
-        ? {
-            ...item,
-            quantity: Math.max(item.quantity - 1, 1),
-          }
+        ? { ...item, quantity: Math.max(item.quantity - 1, 1) }
         : item,
     );
 
     setShoppingList(updatedList);
-    localStorage.setItem("shoppingList", JSON.stringify(updatedList));
+    localStorage.setItem(
+      `shoppingList_${currentUser.id}`,
+      JSON.stringify(updatedList),
+    );
   }
+
   return (
     <PageTemplate>
       <div className="div">
         <h2>Shopping List Page</h2>
 
-        {shoppingList.length === 0 ? (
+        {!currentUser ? (
+          <p>Please log in first</p>
+        ) : shoppingList.length === 0 ? (
           <p>No items in shopping list</p>
         ) : (
           shoppingList.map((item) => (
@@ -75,9 +82,7 @@ export default function ShoppingPage() {
                 }}
               />
               <h4>{item.item.name}</h4>
-
-              <p style={{ paddingLeft: "10px" }}> ${item.item.price}</p>
-
+              <p style={{ paddingLeft: "10px" }}>${item.item.price}</p>
               <p style={{ paddingLeft: "50px" }}>{item.quantity}</p>
 
               <DecreaseButton
@@ -86,15 +91,8 @@ export default function ShoppingPage() {
                 onChange={() => handleDecreaseQuantity(item.id)}
               />
 
-              <button
-                onClick={() => handleDeleteItem(item.id)}
-                style={{
-                  cursor: "pointer",
-                  padding: "8px",
-                  border: "none",
-                }}
-              >
-                <FaTrashAlt style={{ color: "black", fontSize: "10px" }} />
+              <button onClick={() => handleDeleteItem(item.id)}>
+                <FaTrashAlt />
               </button>
             </div>
           ))
