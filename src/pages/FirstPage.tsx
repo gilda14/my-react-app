@@ -31,11 +31,7 @@ export default function FirstPage() {
       const data = await response.json();
 
       if (response.ok) {
-        const newUser = {
-          id: crypto.randomUUID(),
-          username: username,
-        };
-        localStorage.setItem("currentUser", JSON.stringify(newUser));
+        localStorage.setItem("currentUser", JSON.stringify(data.user));
 
         alert("User registered successfully!");
         console.log(data);
@@ -46,25 +42,41 @@ export default function FirstPage() {
         alert(data.message || "Registration failed");
       }
     } catch (error) {
-      console.error(error);
-      alert("Could not connect to server");
+      console.error("REGISTER ERROR:", error);
+      alert("Check browser console");
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (username === "" || password === "") {
       alert("Please insert correct username or password");
       return;
     }
 
-    const currentUser = {
-      id: username,
-      username: username,
-    };
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
 
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      const data = await response.json();
 
-    navigate("/second-page");
+      if (response.ok) {
+        localStorage.setItem("currentUser", JSON.stringify(data.user));
+        navigate("/second-page");
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("LOGIN ERROR:", error);
+      alert("Check browser console");
+    }
   };
   return (
     <PageTemplate>

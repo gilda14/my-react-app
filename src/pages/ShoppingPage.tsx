@@ -1,61 +1,65 @@
 import PageTemplate from "../PageTemplate";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import Button from "../components/Button";
 import DecreaseButton from "../components/DecreaseButton";
 
-type Product = {
+type ShoppingItem = {
   id: number;
-  name: string;
+  user_id: number;
+  product_name: string;
   price: number;
   picture: string;
-};
-
-type ShoppingItem = {
-  id: string;
-  item: Product;
   quantity: number;
-  userId: string;
 };
 
 export default function ShoppingPage() {
   const navigate = useNavigate();
-
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
 
-  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(() => {
-    if (!currentUser) return [];
+  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
-    const savedList = localStorage.getItem(`shoppingList_${currentUser.id}`);
-    return savedList ? JSON.parse(savedList) : [];
-  });
+  useEffect(() => {
+    async function getShoppingList() {
+      if (!currentUser) return;
 
-  function handleDeleteItem(id: string) {
-    if (!currentUser) return;
+      const response = await fetch(
+        `http://localhost:5000/shopping-list/${currentUser.id}`,
+      );
 
-    const updatedList = shoppingList.filter((item) => item.id !== id);
+      const data = await response.json();
+      setShoppingList(data);
+    }
 
-    setShoppingList(updatedList);
-    localStorage.setItem(
-      `shoppingList_${currentUser.id}`,
-      JSON.stringify(updatedList),
-    );
+    getShoppingList();
+  }, []);
+
+  async function handleDeleteItem(id: number) {
+    await fetch(`http://localhost:5000/shopping-list/${id}`, {
+      method: "DELETE",
+    });
+
+    setShoppingList(shoppingList.filter((item) => item.id !== id));
   }
 
-  function handleDecreaseQuantity(id: string) {
-    if (!currentUser) return;
+  async function handleDecreaseQuantity(item: ShoppingItem) {
+    const newQuantity = Math.max(item.quantity - 1, 1);
 
-    const updatedList = shoppingList.map((item) =>
-      item.id === id
-        ? { ...item, quantity: Math.max(item.quantity - 1, 1) }
-        : item,
-    );
+    await fetch(`http://localhost:5000/shopping-list/${item.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ quantity: newQuantity }),
+    });
 
-    setShoppingList(updatedList);
-    localStorage.setItem(
-      `shoppingList_${currentUser.id}`,
-      JSON.stringify(updatedList),
+    setShoppingList(
+      shoppingList.map((shoppingItem) =>
+        shoppingItem.id === item.id
+          ? { ...shoppingItem, quantity: newQuantity }
+          : shoppingItem,
+      ),
     );
   }
 
@@ -72,8 +76,8 @@ export default function ShoppingPage() {
           shoppingList.map((item) => (
             <div className="item" key={item.id}>
               <img
-                src={item.item.picture}
-                alt={item.item.name}
+                src={item.picture}
+                alt={item.product_name}
                 style={{
                   width: "35px",
                   height: "35px",
@@ -81,14 +85,17 @@ export default function ShoppingPage() {
                   marginRight: "20px",
                 }}
               />
-              <h4>{item.item.name}</h4>
-              <p style={{ paddingLeft: "10px" }}>${item.item.price}</p>
+
+              <h4>{item.product_name}</h4>
+
+              <p style={{ paddingLeft: "10px" }}>${item.price}</p>
+
               <p style={{ paddingLeft: "50px" }}>{item.quantity}</p>
 
               <DecreaseButton
                 value={item.quantity}
                 min={1}
-                onChange={() => handleDecreaseQuantity(item.id)}
+                onChange={() => handleDecreaseQuantity(item)}
               />
 
               <button onClick={() => handleDeleteItem(item.id)}>

@@ -1,9 +1,8 @@
 import PageTemplate from "../PageTemplate";
 import { useNavigate } from "react-router-dom";
 import SearchItem from "../components/SearchItem";
-import { useEffect, useState } from "react";
-import { FaShoppingCart } from "react-icons/fa"; // Import the icon
-import { FaSearch } from "react-icons/fa";
+import { useState } from "react";
+import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import Button from "../components/Button";
 
 type Product = {
@@ -13,17 +12,12 @@ type Product = {
   picture: string;
 };
 
-type ShoppingItem = {
-  id: string;
-  item: Product;
-  quantity: number;
-  userId: string;
-};
-
 export default function Secondpage() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+
   const [search, setSearch] = useState("");
+
   const [products] = useState<Product[]>([
     {
       id: 1,
@@ -44,107 +38,69 @@ export default function Secondpage() {
       picture: "/bread.png",
     },
   ]);
-  //new  shopping list
-  // const [newName, setNewName] = useState("");
-  // const [newPrice, setNewPrice] = useState("");
-  // const [newPicture, setNewPicture] = useState("");
-  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(() => {
-    if (!currentUser) return [];
-
-    const savedList = localStorage.getItem(`shoppingList_${currentUser.id}`);
-
-    return savedList ? JSON.parse(savedList) : [];
-  });
-
-  useEffect(() => {
-    if (!currentUser) return;
-
-    localStorage.setItem(
-      `shoppingList_${currentUser.id}`,
-      JSON.stringify(shoppingList),
-    );
-  }, [shoppingList, currentUser]);
 
   function handleOnClick() {
+    localStorage.removeItem("currentUser");
     navigate("/first-page");
   }
 
-  // function handleAddProduct() {
-  //   if (
-  //     newName.trim() === "" ||
-  //     newPrice.trim() === "" ||
-  //     newPicture.trim() === ""
-  //   )
-  //     return;
+  async function handAddToList(product: Product) {
+    if (!currentUser) {
+      //alert("Please login first");
+      navigate("/first-page");
+      return;
+    }
 
-  //   const newProduct: Product = {
-  //     id: products.length ? products[products.length - 1].id + 1 : 1,
-  //     name: newName,
-  //     picture: newPicture,
-  //     price: Number(newPrice),
-  //   };
-
-  //   setProducts([...products, newProduct]);
-
-  //   setNewName("");
-  //   setNewPrice("");
-  //   setNewPicture("");
-  // }
-
-  //Add Item to the shopping list
-  function handAddToList(product: Product) {
-    console.log("currentUser:", currentUser);
-    console.log("shopping key:", `shoppingList_${currentUser.id}`);
-    const existingItem = shoppingList.find(
-      (item) => item.item.id === product.id,
-    );
-
-    if (existingItem) {
-      setShoppingList(
-        shoppingList.map((item) =>
-          item.item.id === product.id
-            ? { ...item, quantity: (item.quantity || 0) + 1 }
-            : item,
-        ),
-      );
-    } else {
-      setShoppingList([
-        ...shoppingList,
-        {
-          id: crypto.randomUUID(),
-          userId: currentUser.id,
-          item: product,
-          quantity: 1,
+    try {
+      const response = await fetch("http://localhost:5000/shopping-list", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ]);
+        body: JSON.stringify({
+          userId: currentUser.id,
+          product,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to add item");
+        return;
+      }
+
+      // alert("Item added to shopping list");
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to server");
     }
   }
 
-  //delete item from shopping list
-  // function handleDeleteItem(id: string) {
-  //   setShoppingList(shoppingList.filter((item) => item.id !== id));
-  // }
-
   function handleGoToShoppingList() {
-    navigate("/shopping-Page", { state: { shoppingList } });
+    navigate("/shopping-Page");
   }
 
   return (
     <PageTemplate>
       <div className="div">
         <h3>All Products</h3>
+
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <FaSearch />
           <SearchItem setSearch={setSearch} />
         </div>
 
-        <Button onClick={() => handleGoToShoppingList()}>
+        <Button onClick={handleGoToShoppingList}>
           <FaShoppingCart />
         </Button>
+
         <br />
+
         <Button onClick={handleOnClick} style={{ float: "right" }}>
           Log out
         </Button>
+
         <div>
           {products
             .filter((product) =>
@@ -154,6 +110,7 @@ export default function Secondpage() {
               <div className="item" key={product.id}>
                 <img
                   src={product.picture}
+                  alt={product.name}
                   style={{
                     width: "35px",
                     height: "35px",
@@ -161,6 +118,7 @@ export default function Secondpage() {
                     marginRight: "20px",
                   }}
                 />
+
                 <h4>{product.name}</h4>
 
                 <p
@@ -178,45 +136,6 @@ export default function Secondpage() {
               </div>
             ))}
         </div>
-        {/* <input
-          type="text"
-          placeholder="Product name"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-
-        <input
-          type="number"
-          placeholder="Price"
-          value={newPrice}
-          onChange={(e) => setNewPrice(e.target.value)}
-        />
-
-        <input
-          type="text"
-          placeholder="Picture URL"
-          value={newPicture}
-          onChange={(e) => setNewPicture(e.target.value)}
-        />
-
-        <button onClick={handleAddProduct}>Add Product</button> */}
-        {/* <h4>New Shopping List </h4>
-        
-        <div>
-          {shoppingList.length === 0 ? (
-            <p>You dont have anything in your shopping list yet</p>
-          ) : (
-            shoppingList.map((item) => (
-              <div className="item" key={item.id}>
-                <h4>{item.item.name}</h4>
-                <p>${item.item.price}</p>
-                <button onClick={() => handleDeleteItem(item.id)}>
-                  Delete
-                </button>
-              </div>
-            ))
-          )}
-        </div> */}
       </div>
     </PageTemplate>
   );
