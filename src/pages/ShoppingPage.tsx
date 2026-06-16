@@ -20,6 +20,10 @@ export default function ShoppingPage() {
 
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
+  const totalPrice = shoppingList.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
+
   useEffect(() => {
     async function getShoppingList() {
       if (!currentUser) return;
@@ -97,6 +101,12 @@ export default function ShoppingPage() {
                 min={1}
                 onChange={() => handleDecreaseQuantity(item)}
               />
+              <p style={{ marginRight: "15px" }}>
+                <h4>
+                  Price of this item is:{" "}
+                  {(item.price * item.quantity).toFixed(2)}
+                </h4>
+              </p>
 
               <button onClick={() => handleDeleteItem(item.id)}>
                 <FaTrashAlt />
@@ -104,8 +114,15 @@ export default function ShoppingPage() {
             </div>
           ))
         )}
+        <div style={{ float: "left" }}>
+          <h3>Total Price is : ${totalPrice.toFixed(2)}</h3>
+        </div>
 
-        <Button onClick={() => navigate("/second-page")}>Back</Button>
+        <div style={{ float: "right" }}>
+          <Button onClick={() => navigate("/second-page")}>
+            Back to the shopping list
+          </Button>
+        </div>
       </div>
     </PageTemplate>
   );
