@@ -91,7 +91,10 @@ export default function Secondpage() {
           <SearchItem setSearch={setSearch} />
         </div>
 
-        <Button onClick={handleGoToShoppingList}>
+        <Button
+          onClick={handleGoToShoppingList}
+          style={{ float: "right", marginRight: "10px", display: "flex" }}
+        >
           <FaShoppingCart />
         </Button>
 

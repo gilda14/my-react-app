@@ -1,0 +1,30 @@
+.Increase-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  padding: 10px;
+  margin: 10px;
+}
+
+.Increase-button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.Increase-button:active:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.Increase-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

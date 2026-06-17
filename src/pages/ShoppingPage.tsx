@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import Button from "../components/Button";
 import DecreaseButton from "../components/DecreaseButton";
+import IncreaseButton from "../components/IncreaseButton";
 
 type ShoppingItem = {
   id: number;
@@ -66,7 +67,25 @@ export default function ShoppingPage() {
       ),
     );
   }
+  async function handleIncreaseQuantity(item: ShoppingItem) {
+    const newQuantity = item.quantity + 1;
 
+    await fetch(`http://localhost:5000/shopping-list/${item.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ quantity: newQuantity }),
+    });
+
+    setShoppingList(
+      shoppingList.map((shoppingItem) =>
+        shoppingItem.id === item.id
+          ? { ...shoppingItem, quantity: newQuantity }
+          : shoppingItem,
+      ),
+    );
+  }
   return (
     <PageTemplate>
       <div className="div">
@@ -101,6 +120,9 @@ export default function ShoppingPage() {
                 min={1}
                 onChange={() => handleDecreaseQuantity(item)}
               />
+
+              <IncreaseButton onChange={() => handleIncreaseQuantity(item)} />
+
               <p style={{ marginRight: "15px" }}>
                 <h4>
                   Price of this item is:{" "}
