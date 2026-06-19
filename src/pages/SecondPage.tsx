@@ -4,7 +4,7 @@ import SearchItem from "../components/SearchItem";
 import { useState } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import Button from "../components/Button";
-import styles from "../components/SecondPage.module.css";
+import styles from "./Secondpage.module.css";
 
 type Product = {
   id: number;

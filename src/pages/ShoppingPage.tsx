@@ -5,6 +5,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import Button from "../components/Button";
 import DecreaseButton from "../components/DecreaseButton";
 import IncreaseButton from "../components/IncreaseButton";
+import styles from "./ShoppingPage.module.css";
 
 type ShoppingItem = {
   id: number;
@@ -67,6 +68,7 @@ export default function ShoppingPage() {
       ),
     );
   }
+
   async function handleIncreaseQuantity(item: ShoppingItem) {
     const newQuantity = item.quantity + 1;
 
@@ -86,10 +88,34 @@ export default function ShoppingPage() {
       ),
     );
   }
+
+  function handleLogout() {
+    localStorage.removeItem("currentUser");
+    navigate("/first-page");
+  }
+
   return (
     <PageTemplate>
-      <div className="div">
-        <h2>Shopping List Page</h2>
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div>
+            <h2>Shopping List Page</h2>
+            <p>Manage your shopping items</p>
+          </div>
+
+          <div className={styles.actions}>
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/second-page")}
+            >
+              Back to products
+            </Button>
+
+            <Button variant="ghost" onClick={handleLogout}>
+              Log out
+            </Button>
+          </div>
+        </div>
 
         {!currentUser ? (
           <p>Please log in first</p>
@@ -123,12 +149,12 @@ export default function ShoppingPage() {
 
               <IncreaseButton onChange={() => handleIncreaseQuantity(item)} />
 
-              <p style={{ marginRight: "15px" }}>
+              <div style={{ marginRight: "15px" }}>
                 <h4>
                   Price of this item is:{" "}
                   {(item.price * item.quantity).toFixed(2)}
                 </h4>
-              </p>
+              </div>
 
               <button onClick={() => handleDeleteItem(item.id)}>
                 <FaTrashAlt />
@@ -136,14 +162,9 @@ export default function ShoppingPage() {
             </div>
           ))
         )}
+
         <div style={{ float: "left" }}>
           <h3>Total Price is : ${totalPrice.toFixed(2)}</h3>
-        </div>
-
-        <div style={{ float: "right" }}>
-          <Button onClick={() => navigate("/second-page")}>
-            Back to the shopping list
-          </Button>
         </div>
       </div>
     </PageTemplate>
