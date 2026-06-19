@@ -4,6 +4,7 @@ import SearchItem from "../components/SearchItem";
 import { useState } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import Button from "../components/Button";
+import styles from "../components/SecondPage.module.css";
 
 type Product = {
   id: number;
@@ -15,28 +16,12 @@ type Product = {
 export default function Secondpage() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-
   const [search, setSearch] = useState("");
 
   const [products] = useState<Product[]>([
-    {
-      id: 1,
-      name: "Apple",
-      price: 2.99,
-      picture: "/apple.png",
-    },
-    {
-      id: 2,
-      name: "Milk",
-      price: 4.5,
-      picture: "/milk.png",
-    },
-    {
-      id: 3,
-      name: "Bread",
-      price: 3.25,
-      picture: "/bread.png",
-    },
+    { id: 1, name: "Apple", price: 2.99, picture: "/apple.png" },
+    { id: 2, name: "Milk", price: 4.5, picture: "/milk.png" },
+    { id: 3, name: "Bread", price: 3.25, picture: "/bread.png" },
   ]);
 
   function handleOnClick() {
@@ -46,7 +31,6 @@ export default function Secondpage() {
 
   async function handAddToList(product: Product) {
     if (!currentUser) {
-      //alert("Please login first");
       navigate("/first-page");
       return;
     }
@@ -67,10 +51,7 @@ export default function Secondpage() {
 
       if (!response.ok) {
         alert(data.message || "Failed to add item");
-        return;
       }
-
-      // alert("Item added to shopping list");
     } catch (error) {
       console.error(error);
       alert("Could not connect to server");
@@ -83,58 +64,48 @@ export default function Secondpage() {
 
   return (
     <PageTemplate>
-      <div className="div">
-        <h3>All Products</h3>
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div>
+            <h2>All Products</h2>
+            <p>Choose items for your shopping list</p>
+          </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className={styles.actions}>
+            <Button variant="secondary" onClick={handleGoToShoppingList}>
+              <FaShoppingCart />
+            </Button>
+
+            <Button variant="ghost" onClick={handleOnClick}>
+              Log out
+            </Button>
+          </div>
+        </div>
+
+        <div className={styles.searchBox}>
           <FaSearch />
           <SearchItem setSearch={setSearch} />
         </div>
 
-        <Button
-          onClick={handleGoToShoppingList}
-          style={{ float: "right", marginRight: "10px", display: "flex" }}
-        >
-          <FaShoppingCart />
-        </Button>
-
-        <br />
-
-        <Button onClick={handleOnClick} style={{ float: "right" }}>
-          Log out
-        </Button>
-
-        <div>
+        <div className={styles.productGrid}>
           {products
             .filter((product) =>
               product.name.toLowerCase().includes(search.toLowerCase()),
             )
             .map((product) => (
-              <div className="item" key={product.id}>
+              <div className={styles.card} key={product.id}>
                 <img
                   src={product.picture}
                   alt={product.name}
-                  style={{
-                    width: "35px",
-                    height: "35px",
-                    marginLeft: "20px",
-                    marginRight: "20px",
-                  }}
+                  className={styles.productImage}
                 />
 
-                <h4>{product.name}</h4>
+                <h3>{product.name}</h3>
 
-                <p
-                  style={{
-                    marginLeft: "10px",
-                    marginRight: "10px",
-                  }}
-                >
-                  ${product.price}
-                </p>
+                <p className={styles.price}>${product.price}</p>
 
-                <Button onClick={() => handAddToList(product)}>
-                  Add to the shopping list
+                <Button fullWidth onClick={() => handAddToList(product)}>
+                  Add to list
                 </Button>
               </div>
             ))}

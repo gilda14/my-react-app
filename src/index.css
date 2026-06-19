@@ -121,7 +121,8 @@ code {
 .header-footer {
   background-color: #5f83ed;
   color: #08060d;
-
+font-style:italic;
+font-size:x-large;
   padding-top: 15px;
   padding-bottom: 15px;
 }

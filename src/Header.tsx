@@ -1,11 +1,5 @@
-
-
 const Header = () => {
-  return (
-    <header>
-      This is Header text
-    </header>
-  )
-}
+  return <header>Welcome to our Online shopping page</header>;
+};
 
-export default Header
+export default Header;

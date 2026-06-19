@@ -6,6 +6,7 @@ import Button from "../components/Button";
 export default function HomePage() {
   const navigate = useNavigate();
   const [data, setData] = useState("");
+
   useEffect(() => {
     fetch("http://localhost:5000/")
       .then((res) => res.json())
