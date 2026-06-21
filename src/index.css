@@ -178,5 +178,16 @@ item input[type="checkbox"] {
   cursor: pointer;
 }
 
+.loginCard button {
+  margin-top: 16px;
+}
 
+.registerText {
+  margin: 24px 0 16px;
+}
 
+.secondary {
+  background: #f8fafc;
+  color: #111111;
+  border: 1px solid #d1d5db;
+}

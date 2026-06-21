@@ -1,0 +1,55 @@
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f8fafc;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 420px;
+  padding: 42px;
+  border-radius: 30px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12);
+  text-align: center;
+}
+
+.loginCard h2 {
+  margin: 18px 0 0;
+  font-size: 34px;
+  color: #0f172a;
+}
+
+.loginSubtitle {
+  margin: 10px 0 30px;
+  color: #64748b;
+}
+
+.registerText {
+  margin: 24px 0 8px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.loginPage {
+  background: #651267b8;
+}
+.secondary {
+  background: #f8fafc;
+  color: #111111;
+  border: 1px solid #d1d5db;
+}
+
+.primary {
+  background: #111111;
+  color: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.primary:hover {
+  background: #000000;
+}

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import PageTemplate from "../PageTemplate";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import "./FirstPage.css";
+
+import styles from "./FirstPage.module.css";
 
 export default function FirstPage() {
   const navigate = useNavigate();
@@ -81,8 +82,8 @@ export default function FirstPage() {
   };
   return (
     <PageTemplate>
-      <div className="login-page">
-        <div className="login-card">
+      <div className={styles.loginPage}>
+        <div className={styles.loginCard}>
           {/*Email Input*/}
           {/* <input
           type="email"
@@ -120,10 +121,18 @@ export default function FirstPage() {
               onChange={setPassword}
             />
             <br />
-            <Button onClick={handleLogin}>Login</Button>
+            <Button fullWidth onClick={handleLogin}>
+              Login
+            </Button>
 
-            <br />
-            <Button onClick={() => navigate("/register")}>Register</Button>
+            <div className={styles.buttonSpacing}></div>
+            <Button
+              fullWidth
+              variant="secondary"
+              onClick={() => navigate("/register")}
+            >
+              Register
+            </Button>
           </div>
         </div>
       </div>

@@ -84,3 +84,15 @@
 .fullWidth {
   width: 100%;
 }
+
+.primary {
+  background: #111111;
+  color: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+  margin-top:60px;
+  margin-bottom: 20px;
+}
+
+.primary:hover {
+  background: #000000;
+}
