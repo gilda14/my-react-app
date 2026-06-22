@@ -162,6 +162,21 @@ app.patch("/shopping-list/:id", async (req, res) => {
   }
 });
 
+
+
+app.get("/items", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, description, photo, price FROM items ORDER BY id ASC"
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("GET ITEMS ERROR:", error);
+    res.status(500).json({ message: "Failed to get items" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
 });

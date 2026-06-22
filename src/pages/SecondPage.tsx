@@ -1,7 +1,7 @@
 import PageTemplate from "../PageTemplate";
 import { useNavigate } from "react-router-dom";
 import SearchItem from "../components/SearchItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import Button from "../components/Button";
 import styles from "./Secondpage.module.css";
@@ -9,8 +9,9 @@ import styles from "./Secondpage.module.css";
 type Product = {
   id: number;
   name: string;
+  description: string;
+  photo: string;
   price: number;
-  picture: string;
 };
 
 export default function Secondpage() {
@@ -18,11 +19,28 @@ export default function Secondpage() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
   const [search, setSearch] = useState("");
 
-  const [products] = useState<Product[]>([
-    { id: 1, name: "Apple", price: 2.99, picture: "/apple.png" },
-    { id: 2, name: "Milk", price: 4.5, picture: "/milk.png" },
-    { id: 3, name: "Bread", price: 3.25, picture: "/bread.png" },
-  ]);
+  // const [products] = useState<Product[]>([
+  //   { id: 1, name: "Apple", price: 2.99, picture: "/apple.png" },
+  //   { id: 2, name: "Milk", price: 4.5, picture: "/milk.png" },
+  //   { id: 3, name: "Bread", price: 3.25, picture: "/bread.png" },
+  // ]);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    async function fetchItems() {
+      try {
+        const response = await fetch("http://localhost:5000/items");
+        const data = await response.json();
+
+        setProducts(data);
+      } catch (error) {
+        console.error(error);
+        alert("Could not load products");
+      }
+    }
+
+    fetchItems();
+  }, []);
 
   function handleOnClick() {
     localStorage.removeItem("currentUser");
@@ -95,7 +113,7 @@ export default function Secondpage() {
             .map((product) => (
               <div className={styles.card} key={product.id}>
                 <img
-                  src={product.picture}
+                  src={product.photo}
                   alt={product.name}
                   className={styles.productImage}
                 />
