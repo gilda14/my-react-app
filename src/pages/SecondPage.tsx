@@ -119,6 +119,7 @@ export default function Secondpage() {
                 />
 
                 <h3>{product.name}</h3>
+                <h5>{product.description}</h5>
 
                 <p className={styles.price}>${product.price}</p>
 

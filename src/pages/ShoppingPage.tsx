@@ -12,7 +12,7 @@ type ShoppingItem = {
   user_id: number;
   product_name: string;
   price: number;
-  picture: string;
+  photo: string;
   quantity: number;
 };
 
@@ -35,6 +35,7 @@ export default function ShoppingPage() {
       );
 
       const data = await response.json();
+      console.log(data);
       setShoppingList(data);
     }
 
@@ -125,14 +126,9 @@ export default function ShoppingPage() {
           shoppingList.map((item) => (
             <div className="item" key={item.id}>
               <img
-                src={item.picture}
+                src={item.photo}
                 alt={item.product_name}
-                style={{
-                  width: "35px",
-                  height: "35px",
-                  marginLeft: "20px",
-                  marginRight: "20px",
-                }}
+                className={styles.productImage}
               />
 
               <h4>{item.product_name}</h4>

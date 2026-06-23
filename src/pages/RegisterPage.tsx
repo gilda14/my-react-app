@@ -6,23 +6,34 @@ import { useNavigate } from "react-router-dom";
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   async function handleRegister() {
-    const response = await fetch("http://localhost:5000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
 
-    const data = await response.json();
-    console.log(data);
-    alert(data.message);
+      const data = await response.json();
+
+      alert(data.message);
+
+      // Redirect to first page if registration succeeded
+      if (response.ok) {
+        navigate("/first-page");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Something went wrong. Please try again.");
+    }
   }
 
   function handleOnClick() {
@@ -49,21 +60,9 @@ export default function RegisterPage() {
         onChange={setPassword}
       />
 
-      {/* <Input
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      /> */}
-
-      {/* <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      /> */}
-
       <Button onClick={handleRegister}>Submit</Button>
-      <Button onClick={handleOnClick}>back to login page</Button>
+
+      <Button onClick={handleOnClick}>Back to Login Page</Button>
     </div>
   );
 }
