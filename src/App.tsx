@@ -5,6 +5,9 @@ import HomePage from "./pages/HomePage";
 import Secondpage from "./pages/SecondPage";
 import ShoppingPage from "./pages/ShoppingPage";
 import RegisterPage from "./pages/RegisterPage";
+import WorkflowPage from "./components/ShoppingWorkflow";
+import PaymentPage from "./pages/PaymentPage";
+import MyOrderPage from "./pages/MyOrder";
 
 function App() {
   return (
@@ -15,6 +18,10 @@ function App() {
         <Route path="/second-page" element={<Secondpage />} />
         <Route path="/shopping-Page" element={<ShoppingPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        {/* New workflow page */}
+        <Route path="/workflow" element={<WorkflowPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/my-orders" element={<MyOrderPage />} />
       </Routes>
     </>
   );

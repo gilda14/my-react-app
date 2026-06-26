@@ -116,13 +116,12 @@ app.post("/shopping-list", async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO shopping_items
-       (user_id, product_name, price, picture, quantity)
-       VALUES ($1, $2, $3, $4, 1)
-       RETURNING *`,
-      [userId, product.name, product.price, product.picture]
-    );
-
+  `INSERT INTO shopping_items
+   (user_id, product_name, price, picture, quantity)
+   VALUES ($1, $2, $3, $4, 1)
+   RETURNING *`,
+  [userId, product.name, product.price, product.photo]
+);
     res.json(result.rows[0]);
   } catch (error) {
     console.error("ADD SHOPPING ITEM ERROR:", error);
@@ -162,8 +161,73 @@ app.patch("/shopping-list/:id", async (req, res) => {
   }
 });
 
+app.post("/orders", async (req, res) => {
+  const { user_id, items, total_price } = req.body;
 
+  try {
+    const orderResult = await pool.query(
+      `INSERT INTO orders (user_id, total_price)
+       VALUES ($1, $2)
+       RETURNING id`,
+      [user_id, total_price]
+    );
 
+    const orderId = orderResult.rows[0].id;
+
+    for (const item of items) {
+      await pool.query(
+        `INSERT INTO order_items
+         (order_id, product_name, price, picture, quantity)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [
+          orderId,
+          item.product_name,
+          item.price,
+          item.picture || item.photo,
+          item.quantity,
+        ]
+      );
+
+      await pool.query("DELETE FROM shopping_items WHERE id = $1", [item.id]);
+    }
+
+    res.json({
+      message: "Order created successfully",
+      orderId: orderId,
+    });
+  } catch (error) {
+    console.error("CREATE ORDER ERROR:", error);
+    res.status(500).json({ message: "Failed to create order" });
+  }
+});
+
+app.get("/orders/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+        orders.id AS order_id,
+        orders.total_price,
+        orders.created_at,
+        order_items.id AS order_item_id,
+        order_items.product_name,
+        order_items.price,
+        order_items.picture,
+        order_items.quantity
+      FROM orders
+      JOIN order_items ON orders.id = order_items.order_id
+      WHERE orders.user_id = $1
+      ORDER BY orders.created_at DESC`,
+      [userId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("GET ORDERS ERROR:", error);
+    res.status(500).json({ message: "Failed to get orders" });
+  }
+});
 app.get("/items", async (req, res) => {
   try {
     const result = await pool.query(

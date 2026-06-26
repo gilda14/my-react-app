@@ -12,42 +12,65 @@ type ShoppingItem = {
   user_id: number;
   product_name: string;
   price: number;
-  photo: string;
+  picture: string;
   quantity: number;
 };
 
 export default function ShoppingPage() {
   const navigate = useNavigate();
+
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
 
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   const totalPrice = shoppingList.reduce((total, item) => {
-    return total + item.price * item.quantity;
+    if (selectedItems.includes(item.id)) {
+      return total + Number(item.price) * Number(item.quantity);
+    }
+
+    return total;
   }, 0);
 
   useEffect(() => {
     async function getShoppingList() {
       if (!currentUser) return;
 
-      const response = await fetch(
-        `http://localhost:5000/shopping-list/${currentUser.id}`,
-      );
+      try {
+        const response = await fetch(
+          `http://localhost:5000/shopping-list/${currentUser.id}`,
+        );
 
-      const data = await response.json();
-      console.log(data);
-      setShoppingList(data);
+        const data = await response.json();
+        setShoppingList(data);
+      } catch (error) {
+        console.error("Error loading shopping list:", error);
+      }
     }
 
     getShoppingList();
   }, []);
+
+  function handleCheckboxChange(id: number) {
+    setSelectedItems((prevSelectedItems) =>
+      prevSelectedItems.includes(id)
+        ? prevSelectedItems.filter((itemId) => itemId !== id)
+        : [...prevSelectedItems, id],
+    );
+  }
 
   async function handleDeleteItem(id: number) {
     await fetch(`http://localhost:5000/shopping-list/${id}`, {
       method: "DELETE",
     });
 
-    setShoppingList(shoppingList.filter((item) => item.id !== id));
+    setShoppingList((prevShoppingList) =>
+      prevShoppingList.filter((item) => item.id !== id),
+    );
+
+    setSelectedItems((prevSelectedItems) =>
+      prevSelectedItems.filter((itemId) => itemId !== id),
+    );
   }
 
   async function handleDecreaseQuantity(item: ShoppingItem) {
@@ -61,8 +84,8 @@ export default function ShoppingPage() {
       body: JSON.stringify({ quantity: newQuantity }),
     });
 
-    setShoppingList(
-      shoppingList.map((shoppingItem) =>
+    setShoppingList((prevShoppingList) =>
+      prevShoppingList.map((shoppingItem) =>
         shoppingItem.id === item.id
           ? { ...shoppingItem, quantity: newQuantity }
           : shoppingItem,
@@ -81,8 +104,8 @@ export default function ShoppingPage() {
       body: JSON.stringify({ quantity: newQuantity }),
     });
 
-    setShoppingList(
-      shoppingList.map((shoppingItem) =>
+    setShoppingList((prevShoppingList) =>
+      prevShoppingList.map((shoppingItem) =>
         shoppingItem.id === item.id
           ? { ...shoppingItem, quantity: newQuantity }
           : shoppingItem,
@@ -112,6 +135,10 @@ export default function ShoppingPage() {
               Back to products
             </Button>
 
+            <Button variant="secondary" onClick={() => navigate("/my-orders")}>
+              My Orders
+            </Button>
+
             <Button variant="ghost" onClick={handleLogout}>
               Log out
             </Button>
@@ -119,48 +146,88 @@ export default function ShoppingPage() {
         </div>
 
         {!currentUser ? (
-          <p>Please log in first</p>
+          <div className={styles.emptyCard}>
+            <p>Please log in first</p>
+          </div>
         ) : shoppingList.length === 0 ? (
-          <p>No items in shopping list</p>
+          <div className={styles.emptyCard}>
+            <p>No items in shopping list</p>
+          </div>
         ) : (
-          shoppingList.map((item) => (
-            <div className="item" key={item.id}>
-              <img
-                src={item.photo}
-                alt={item.product_name}
-                className={styles.productImage}
-              />
+          <div className={styles.cartBox}>
+            {shoppingList.map((item) => (
+              <div className={styles.item} key={item.id}>
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item.id)}
+                  onChange={() => handleCheckboxChange(item.id)}
+                  className={styles.checkbox}
+                />
 
-              <h4>{item.product_name}</h4>
+                <div className={styles.imageBox}>
+                  <img
+                    src={item.picture}
+                    alt={item.product_name}
+                    className={styles.image}
+                  />
+                </div>
 
-              <p style={{ paddingLeft: "10px" }}>${item.price}</p>
+                <div className={styles.productInfo}>
+                  <h4>{item.product_name}</h4>
+                  <p>Price: ${Number(item.price).toFixed(2)}</p>
+                </div>
 
-              <p style={{ paddingLeft: "50px" }}>{item.quantity}</p>
+                <div className={styles.quantityBox}>
+                  <span>Qty: {item.quantity}</span>
 
-              <DecreaseButton
-                value={item.quantity}
-                min={1}
-                onChange={() => handleDecreaseQuantity(item)}
-              />
+                  <DecreaseButton
+                    value={item.quantity}
+                    min={1}
+                    onChange={() => handleDecreaseQuantity(item)}
+                  />
 
-              <IncreaseButton onChange={() => handleIncreaseQuantity(item)} />
+                  <IncreaseButton
+                    onChange={() => handleIncreaseQuantity(item)}
+                  />
+                </div>
 
-              <div style={{ marginRight: "15px" }}>
-                <h4>
-                  Price of this item is:{" "}
-                  {(item.price * item.quantity).toFixed(2)}
-                </h4>
+                <div className={styles.itemTotal}>
+                  ${(Number(item.price) * Number(item.quantity)).toFixed(2)}
+                </div>
+
+                <button
+                  className={styles.deleteButton}
+                  onClick={() => handleDeleteItem(item.id)}
+                >
+                  <FaTrashAlt />
+                </button>
               </div>
-
-              <button onClick={() => handleDeleteItem(item.id)}>
-                <FaTrashAlt />
-              </button>
-            </div>
-          ))
+            ))}
+          </div>
         )}
 
-        <div style={{ float: "left" }}>
-          <h3>Total Price is : ${totalPrice.toFixed(2)}</h3>
+        <div className={styles.summary}>
+          <h3>
+            Total Price is: <strong>${totalPrice.toFixed(2)}</strong>
+          </h3>
+
+          <Button
+            variant="primary"
+            onClick={() => {
+              const itemsForPayment = shoppingList.filter((item) =>
+                selectedItems.includes(item.id),
+              );
+
+              navigate("/payment", {
+                state: {
+                  items: itemsForPayment,
+                  totalPrice: totalPrice,
+                },
+              });
+            }}
+          >
+            Proceed to payment
+          </Button>
         </div>
       </div>
     </PageTemplate>
