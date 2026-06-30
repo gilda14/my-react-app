@@ -12,13 +12,22 @@ type Product = {
   description: string;
   photo: string;
   price: number;
+  category: string;
 };
 
 export default function Secondpage() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
   const [search, setSearch] = useState("");
-
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const categories = [
+    "All",
+    "Food",
+    "Meat & Seafood",
+    "Pet Food & Pet Supplies",
+    "Household Cleaning Products",
+    "Laundry Products",
+  ];
   // const [products] = useState<Product[]>([
   //   { id: 1, name: "Apple", price: 2.99, picture: "/apple.png" },
   //   { id: 2, name: "Milk", price: 4.5, picture: "/milk.png" },
@@ -105,11 +114,31 @@ export default function Secondpage() {
           <SearchItem setSearch={setSearch} />
         </div>
 
+        <div className={styles.categoryBox}>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              variant={selectedCategory === category ? "primary" : "secondary"}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+
         <div className={styles.productGrid}>
           {products
-            .filter((product) =>
-              product.name.toLowerCase().includes(search.toLowerCase()),
-            )
+            .filter((product) => {
+              const matchesSearch = product.name
+                .toLowerCase()
+                .includes(search.toLowerCase());
+
+              const matchesCategory =
+                selectedCategory === "All" ||
+                product.category === selectedCategory;
+
+              return matchesSearch && matchesCategory;
+            })
             .map((product) => (
               <div className={styles.card} key={product.id}>
                 <img

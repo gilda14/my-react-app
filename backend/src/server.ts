@@ -165,12 +165,12 @@ app.post("/orders", async (req, res) => {
   const { user_id, items, total_price } = req.body;
 
   try {
-    const orderResult = await pool.query(
-      `INSERT INTO orders (user_id, total_price)
-       VALUES ($1, $2)
-       RETURNING id`,
-      [user_id, total_price]
-    );
+   const orderResult = await pool.query(
+  `INSERT INTO orders (user_id, total_price, status)
+   VALUES ($1, $2, $3)
+   RETURNING id`,
+  [user_id, total_price, "Ordered"]
+);
 
     const orderId = orderResult.rows[0].id;
 
@@ -210,6 +210,7 @@ app.get("/orders/:userId", async (req, res) => {
         orders.id AS order_id,
         orders.total_price,
         orders.created_at,
+        orders.status,
         order_items.id AS order_item_id,
         order_items.product_name,
         order_items.price,
@@ -231,7 +232,7 @@ app.get("/orders/:userId", async (req, res) => {
 app.get("/items", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, description, photo, price FROM items ORDER BY id ASC"
+      "SELECT id, name, description, photo, price, category FROM items ORDER BY id ASC"
     );
 
     res.json(result.rows);
