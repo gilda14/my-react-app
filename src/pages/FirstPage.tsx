@@ -13,41 +13,41 @@ export default function FirstPage() {
   // const [savedEmail, setSavedEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const handleRegister = async () => {
-    if (username === "" || password === "") {
-      alert("Please enter a username and password");
-      return;
-    }
-    try {
-      const response = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
+  // const handleRegister = async () => {
+  //   if (username === "" || password === "") {
+  //     alert("Please enter a username and password");
+  //     return;
+  //   }
+  //   try {
+  //     const response = await fetch("http://localhost:5000/register", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         username,
+  //         password,
+  //       }),
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("currentUser", JSON.stringify(data.user));
+  //     if (response.ok) {
+  //       localStorage.setItem("currentUser", JSON.stringify(data.user));
 
-        alert("User registered successfully!");
-        console.log(data);
+  //       alert("User registered successfully!");
+  //       console.log(data);
 
-        setUsername("");
-        setPassword("");
-      } else {
-        alert(data.message || "Registration failed");
-      }
-    } catch (error) {
-      console.error("REGISTER ERROR:", error);
-      alert("Check browser console");
-    }
-  };
+  //       setUsername("");
+  //       setPassword("");
+  //     } else {
+  //       alert(data.message || "Registration failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("REGISTER ERROR:", error);
+  //     alert("Check browser console");
+  //   }
+  // };
 
   const handleLogin = async () => {
     if (username === "" || password === "") {

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("customer");
 
   const navigate = useNavigate();
 
@@ -19,6 +20,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           username,
           password,
+          role,
         }),
       });
 
@@ -60,6 +62,11 @@ export default function RegisterPage() {
         onChange={setPassword}
       />
 
+      <select value={role} onChange={(e) => setRole(e.target.value)}>
+        <option value="customer">Customer</option>
+        <option value="seller"> Seller</option>
+      </select>
+      <br />
       <Button onClick={handleRegister}>Submit</Button>
 
       <Button onClick={handleOnClick}>Back to Login Page</Button>
