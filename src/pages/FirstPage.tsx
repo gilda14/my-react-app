@@ -71,7 +71,12 @@ export default function FirstPage() {
 
       if (response.ok) {
         localStorage.setItem("currentUser", JSON.stringify(data.user));
-        navigate("/second-page");
+
+        if (data.user.role === "seller") {
+          navigate("/seller-panel");
+        } else {
+          navigate("/second-page");
+        }
       } else {
         alert(data.message || "Login failed");
       }

@@ -8,6 +8,7 @@ import RegisterPage from "./pages/RegisterPage";
 import WorkflowPage from "./components/ShoppingWorkflow";
 import PaymentPage from "./pages/PaymentPage";
 import MyOrderPage from "./pages/MyOrder";
+import SellerPanel from "./pages/SellerPannel";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/workflow" element={<WorkflowPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/my-orders" element={<MyOrderPage />} />
+        <Route path="/seller-panel" element={<SellerPanel />} />
       </Routes>
     </>
   );

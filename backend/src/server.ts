@@ -2,11 +2,22 @@ import express from "express";
 import cors from "cors";
 import { pool } from "./db.ts";
 import bcrypt from "bcrypt";
+import multer from "multer";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 app.get("/", async (req, res) => {
   const result = await pool.query("SELECT NOW()");
@@ -14,14 +25,14 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username",
-      [username, hashedPassword]
+      "INSERT INTO users (username, password, role) VALUES ($1, $2, $3) RETURNING id, username, role",
+[username, hashedPassword, role || "customer"]
     );
 
     res.json({
@@ -44,7 +55,7 @@ app.post("/login", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT id, username, password FROM users WHERE username = $1",
+     "SELECT id, username, password, role FROM users WHERE username = $1",
       [username]
     );
 
@@ -67,6 +78,7 @@ app.post("/login", async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -117,10 +129,16 @@ app.post("/shopping-list", async (req, res) => {
 
     const result = await pool.query(
   `INSERT INTO shopping_items
-   (user_id, product_name, price, picture, quantity)
-   VALUES ($1, $2, $3, $4, 1)
+   (user_id, product_name, price, picture, quantity,  seller_id)
+   VALUES ($1, $2, $3, $4, 1, $5)
    RETURNING *`,
-  [userId, product.name, product.price, product.photo]
+   [
+    userId,
+    product.name,
+    product.price,
+    product.photo,
+    product.seller_id,
+  ]
 );
     res.json(result.rows[0]);
   } catch (error) {
@@ -177,14 +195,15 @@ app.post("/orders", async (req, res) => {
     for (const item of items) {
       await pool.query(
         `INSERT INTO order_items
-         (order_id, product_name, price, picture, quantity)
-         VALUES ($1, $2, $3, $4, $5)`,
+         (order_id, product_name, price, picture, quantity,  seller_id)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
         [
-          orderId,
-          item.product_name,
-          item.price,
-          item.picture || item.photo,
-          item.quantity,
+         orderId,
+  item.product_name,
+  item.price,
+  item.picture || item.photo,
+  item.quantity,
+  item.seller_id,
         ]
       );
 
@@ -232,7 +251,7 @@ app.get("/orders/:userId", async (req, res) => {
 app.get("/items", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, description, photo, price, category FROM items ORDER BY id ASC"
+      "SELECT id, name, description, photo, price, category, seller_id FROM items ORDER BY id ASC"
     );
 
     res.json(result.rows);
@@ -241,6 +260,88 @@ app.get("/items", async (req, res) => {
     res.status(500).json({ message: "Failed to get items" });
   }
 });
+
+app.post("/seller/items", async (req, res) => {
+  const { seller_id, name, description, photo, price, category } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO items (seller_id, name, description, photo, price, category)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [seller_id, name, description, photo, price, category]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("ADD SELLER ITEM ERROR:", error);
+    res.status(500).json({ message: "Failed to add seller item" });
+  }
+});
+
+app.post("/upload", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    res.status(400).json({ message: "No image uploaded" });
+    return;
+  }
+
+  res.json({
+    imageUrl: `http://localhost:5000/uploads/${req.file.filename}`,
+  });
+});
+//get only the seller's own products
+app.get("/seller/items/:sellerId", async (req, res) => {
+  const { sellerId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT *
+       FROM items
+       WHERE seller_id = $1
+       ORDER BY id DESC`,
+      [sellerId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("GET SELLER ITEMS ERROR:", error);
+    res.status(500).json({
+      message: "Failed to load seller products",
+    });
+  }
+});
+
+
+app.get("/seller/orders/:sellerId", async (req, res) => {
+  const { sellerId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT
+        orders.id AS order_id,
+        orders.status,
+        orders.created_at,
+        order_items.id AS order_item_id,
+        order_items.product_name,
+        order_items.price,
+        order_items.picture,
+        order_items.quantity,
+        order_items.seller_id
+      FROM order_items
+      JOIN orders ON orders.id = order_items.order_id
+      WHERE order_items.seller_id = $1
+      ORDER BY orders.created_at DESC`,
+      [sellerId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("GET SELLER ORDERS ERROR:", error);
+    res.status(500).json({ message: "Failed to get seller orders" });
+  }
+});
+
+
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");

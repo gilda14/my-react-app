@@ -13,6 +13,7 @@ type Product = {
   photo: string;
   price: number;
   category: string;
+  seller_id: number;
 };
 
 export default function Secondpage() {
@@ -40,7 +41,7 @@ export default function Secondpage() {
       try {
         const response = await fetch("http://localhost:5000/items");
         const data = await response.json();
-
+        console.log("Products from server:", data);
         setProducts(data);
       } catch (error) {
         console.error(error);

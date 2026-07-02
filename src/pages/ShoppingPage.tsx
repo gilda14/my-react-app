@@ -14,6 +14,7 @@ type ShoppingItem = {
   price: number;
   picture: string;
   quantity: number;
+  seller_id: number;
 };
 
 export default function ShoppingPage() {

@@ -10,7 +10,9 @@ type ShoppingItem = {
   product_name: string;
   price: number;
   photo: string;
+  picture?: string;
   quantity: number;
+  seller_id: number;
 };
 
 type PaymentState = {
