@@ -341,7 +341,29 @@ app.get("/seller/orders/:sellerId", async (req, res) => {
   }
 });
 
+//This route will let the seller change an order from: Ordered ,Shipped , Delivered
 
+app.patch("/seller/orders/:orderId", async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE orders
+       SET status = $1
+       WHERE id = $2
+       RETURNING *`,
+      [status, orderId]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("UPDATE ORDER STATUS ERROR:", error);
+    res.status(500).json({
+      message: "Failed to update order status",
+    });
+  }
+});
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");

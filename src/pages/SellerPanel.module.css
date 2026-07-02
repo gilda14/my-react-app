@@ -58,3 +58,33 @@
   object-fit: cover;
   border-radius: 12px;
 }
+
+.statusSelect {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.productRow {
+  display: grid;
+  grid-template-columns: 90px 1fr 120px;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.productImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.card {
+  margin-bottom: 28px;
+}

@@ -15,16 +15,34 @@ type Product = {
   seller_id: number;
 };
 
+type SellerOrder = {
+  order_id: number;
+  status: string;
+  created_at: string;
+  order_item_id: number;
+  product_name: string;
+  price: string;
+  picture: string;
+  quantity: number;
+  seller_id: number;
+};
+
 export default function SellerPanel() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
   const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("Food");
   const [uploading, setUploading] = useState(false);
+
   const [myProducts, setMyProducts] = useState<Product[]>([]);
+  const [sellerOrders, setSellerOrders] = useState<SellerOrder[]>([]);
+  const [statusChanges, setStatusChanges] = useState<Record<number, string>>(
+    {},
+  );
 
   async function getMyProducts() {
     if (!currentUser) return;
@@ -37,13 +55,28 @@ export default function SellerPanel() {
     setMyProducts(data);
   }
 
+  async function getSellerOrders() {
+    if (!currentUser) return;
+
+    const response = await fetch(
+      `http://localhost:5000/seller/orders/${currentUser.id}`,
+    );
+
+    const data = await response.json();
+    setSellerOrders(data);
+  }
+
   useEffect(() => {
-    getMyProducts();
+    async function loadSellerData() {
+      await getMyProducts();
+      await getSellerOrders();
+    }
+
+    loadSellerData();
   }, []);
 
   async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-
     if (!file) return;
 
     const formData = new FormData();
@@ -98,6 +131,27 @@ export default function SellerPanel() {
     }
   }
 
+  async function handleUpdateOrderStatus(orderId: number, status: string) {
+    const response = await fetch(
+      `http://localhost:5000/seller/orders/${orderId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      },
+    );
+
+    if (response.ok) {
+      alert("Order status updated successfully!");
+      setStatusChanges({});
+      getSellerOrders();
+    } else {
+      alert("Failed to update order status");
+    }
+  }
+
   function handleLogout() {
     localStorage.removeItem("currentUser");
     navigate("/first-page");
@@ -130,6 +184,7 @@ export default function SellerPanel() {
 
           <div className={styles.form}>
             <Input placeholder="Product Name" value={name} onChange={setName} />
+
             <Input
               placeholder="Description"
               value={description}
@@ -172,6 +227,68 @@ export default function SellerPanel() {
               </Button>
             </div>
           </div>
+        </div>
+
+        <div className={styles.card}>
+          <h2>Customer Orders</h2>
+
+          {sellerOrders.length === 0 ? (
+            <p>No customers have bought your products yet.</p>
+          ) : (
+            sellerOrders.map((order) => (
+              <div key={order.order_item_id} className={styles.productRow}>
+                <img
+                  src={order.picture}
+                  alt={order.product_name}
+                  className={styles.productImage}
+                />
+
+                <div>
+                  <h3>{order.product_name}</h3>
+                  <p>Order ID: #{order.order_id}</p>
+                  <p>Qty: {order.quantity}</p>
+                  <p>Date: {new Date(order.created_at).toLocaleDateString()}</p>
+
+                  <p>
+                    Current Status: <strong>{order.status}</strong>
+                  </p>
+
+                  <select
+                    className={styles.statusSelect}
+                    value={statusChanges[order.order_id] || order.status}
+                    onChange={(e) => {
+                      setStatusChanges({
+                        ...statusChanges,
+                        [order.order_id]: e.target.value,
+                      });
+                    }}
+                  >
+                    <option value="Ordered">Ordered</option>
+                    <option value="Preparing">Preparing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+
+                  <Button
+                    variant="primary"
+                    onClick={() =>
+                      handleUpdateOrderStatus(
+                        order.order_id,
+                        statusChanges[order.order_id] || order.status,
+                      )
+                    }
+                  >
+                    Save Status
+                  </Button>
+                </div>
+
+                <strong>
+                  ${(Number(order.price) * Number(order.quantity)).toFixed(2)}
+                </strong>
+              </div>
+            ))
+          )}
         </div>
 
         <div className={styles.card}>
