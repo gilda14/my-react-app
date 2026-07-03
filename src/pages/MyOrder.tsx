@@ -22,20 +22,30 @@ export default function MyOrderPage() {
 
   const [orders, setOrders] = useState<OrderItem[]>([]);
 
+  async function getOrders() {
+    if (!currentUser) return;
+
+    const response = await fetch(
+      `http://localhost:5000/orders/${currentUser.id}`,
+    );
+
+    const data = await response.json();
+    console.log("ORDERS DATA:", data);
+    setOrders(data);
+  }
   useEffect(() => {
-    async function getOrders() {
-      if (!currentUser) return;
+    const timer = setTimeout(() => {
+      getOrders();
+    }, 0);
 
-      const response = await fetch(
-        `http://localhost:5000/orders/${currentUser.id}`,
-      );
+    const interval = setInterval(() => {
+      getOrders();
+    }, 3000);
 
-      const data = await response.json();
-      console.log("ORDERS DATA:", data);
-      setOrders(data);
-    }
-
-    getOrders();
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   function isStepComplete(currentStatus: string, step: string) {

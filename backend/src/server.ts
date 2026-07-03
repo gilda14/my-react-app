@@ -193,19 +193,20 @@ app.post("/orders", async (req, res) => {
     const orderId = orderResult.rows[0].id;
 
     for (const item of items) {
-      await pool.query(
-        `INSERT INTO order_items
-         (order_id, product_name, price, picture, quantity,  seller_id)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [
-         orderId,
-  item.product_name,
-  item.price,
-  item.picture || item.photo,
-  item.quantity,
-  item.seller_id,
-        ]
-      );
+   await pool.query(
+  `INSERT INTO order_items
+   (order_id, product_name, price, picture, quantity, seller_id, status)
+   VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+  [
+    orderId,
+    item.product_name,
+    item.price,
+    item.picture || item.photo,
+    item.quantity,
+    item.seller_id,
+    "Ordered",
+  ]
+);
 
       await pool.query("DELETE FROM shopping_items WHERE id = $1", [item.id]);
     }
@@ -229,7 +230,7 @@ app.get("/orders/:userId", async (req, res) => {
         orders.id AS order_id,
         orders.total_price,
         orders.created_at,
-        orders.status,
+        order_items.status,
         order_items.id AS order_item_id,
         order_items.product_name,
         order_items.price,
@@ -316,23 +317,23 @@ app.get("/seller/orders/:sellerId", async (req, res) => {
   const { sellerId } = req.params;
 
   try {
-    const result = await pool.query(
-      `SELECT
-        orders.id AS order_id,
-        orders.status,
-        orders.created_at,
-        order_items.id AS order_item_id,
-        order_items.product_name,
-        order_items.price,
-        order_items.picture,
-        order_items.quantity,
-        order_items.seller_id
-      FROM order_items
-      JOIN orders ON orders.id = order_items.order_id
-      WHERE order_items.seller_id = $1
-      ORDER BY orders.created_at DESC`,
-      [sellerId]
-    );
+   const result = await pool.query(
+  `SELECT
+    orders.id AS order_id,
+    order_items.status,
+    orders.created_at,
+    order_items.id AS order_item_id,
+    order_items.product_name,
+    order_items.price,
+    order_items.picture,
+    order_items.quantity,
+    order_items.seller_id
+  FROM order_items
+  JOIN orders ON orders.id = order_items.order_id
+  WHERE order_items.seller_id = $1
+  ORDER BY orders.created_at DESC`,
+  [sellerId]
+);
 
     res.json(result.rows);
   } catch (error) {
@@ -343,24 +344,24 @@ app.get("/seller/orders/:sellerId", async (req, res) => {
 
 //This route will let the seller change an order from: Ordered ,Shipped , Delivered
 
-app.patch("/seller/orders/:orderId", async (req, res) => {
-  const { orderId } = req.params;
+app.patch("/seller/order-items/:orderItemId", async (req, res) => {
+  const { orderItemId } = req.params;
   const { status } = req.body;
 
   try {
     const result = await pool.query(
-      `UPDATE orders
+      `UPDATE order_items
        SET status = $1
        WHERE id = $2
        RETURNING *`,
-      [status, orderId]
+      [status, orderItemId]
     );
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("UPDATE ORDER STATUS ERROR:", error);
+    console.error("UPDATE ORDER ITEM STATUS ERROR:", error);
     res.status(500).json({
-      message: "Failed to update order status",
+      message: "Failed to update order item status",
     });
   }
 });

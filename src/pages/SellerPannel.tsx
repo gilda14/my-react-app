@@ -133,7 +133,7 @@ export default function SellerPanel() {
 
   async function handleUpdateOrderStatus(orderId: number, status: string) {
     const response = await fetch(
-      `http://localhost:5000/seller/orders/${orderId}`,
+      `http://localhost:5000/seller/order-items/${orderId}`,
       {
         method: "PATCH",
         headers: {
@@ -255,11 +255,11 @@ export default function SellerPanel() {
 
                   <select
                     className={styles.statusSelect}
-                    value={statusChanges[order.order_id] || order.status}
+                    value={statusChanges[order.order_item_id] || order.status}
                     onChange={(e) => {
                       setStatusChanges({
                         ...statusChanges,
-                        [order.order_id]: e.target.value,
+                        [order.order_item_id]: e.target.value,
                       });
                     }}
                   >
@@ -274,8 +274,8 @@ export default function SellerPanel() {
                     variant="primary"
                     onClick={() =>
                       handleUpdateOrderStatus(
-                        order.order_id,
-                        statusChanges[order.order_id] || order.status,
+                        order.order_item_id,
+                        statusChanges[order.order_item_id] || order.status,
                       )
                     }
                   >
