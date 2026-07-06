@@ -40,6 +40,7 @@ export default function SellerPanel() {
 
   const [myProducts, setMyProducts] = useState<Product[]>([]);
   const [sellerOrders, setSellerOrders] = useState<SellerOrder[]>([]);
+  const [balance, setBalance] = useState(0);
   const [statusChanges, setStatusChanges] = useState<Record<number, string>>(
     {},
   );
@@ -66,10 +67,23 @@ export default function SellerPanel() {
     setSellerOrders(data);
   }
 
+  async function getSellerBalance() {
+    if (!currentUser) return;
+
+    const response = await fetch(
+      `http://localhost:5000/seller/balance/${currentUser.id}`,
+    );
+
+    const data = await response.json();
+
+    setBalance(Number(data.balance));
+  }
+
   useEffect(() => {
     async function loadSellerData() {
       await getMyProducts();
       await getSellerOrders();
+      await getSellerBalance();
     }
 
     loadSellerData();
@@ -166,6 +180,8 @@ export default function SellerPanel() {
               <h1>Seller Panel</h1>
               <p>Welcome, {currentUser?.username}</p>
               <p>Create and manage your products.</p>
+
+              <h3>Balance: ${balance.toFixed(2)}</h3>
             </div>
 
             <div className={styles.actions}>
@@ -256,6 +272,7 @@ export default function SellerPanel() {
                   <select
                     className={styles.statusSelect}
                     value={statusChanges[order.order_item_id] || order.status}
+                    disabled={order.status === "Delivered"}
                     onChange={(e) => {
                       setStatusChanges({
                         ...statusChanges,
@@ -270,17 +287,19 @@ export default function SellerPanel() {
                     <option value="Delivered">Delivered</option>
                   </select>
 
-                  <Button
-                    variant="primary"
-                    onClick={() =>
-                      handleUpdateOrderStatus(
-                        order.order_item_id,
-                        statusChanges[order.order_item_id] || order.status,
-                      )
-                    }
-                  >
-                    Save Status
-                  </Button>
+                  {order.status !== "Delivered" && (
+                    <Button
+                      variant="primary"
+                      onClick={() =>
+                        handleUpdateOrderStatus(
+                          order.order_item_id,
+                          statusChanges[order.order_item_id] || order.status,
+                        )
+                      }
+                    >
+                      Save Status
+                    </Button>
+                  )}
                 </div>
 
                 <strong>

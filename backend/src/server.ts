@@ -226,20 +226,21 @@ app.get("/orders/:userId", async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT 
-        orders.id AS order_id,
-        orders.total_price,
-        orders.created_at,
-        order_items.status,
-        order_items.id AS order_item_id,
-        order_items.product_name,
-        order_items.price,
-        order_items.picture,
-        order_items.quantity
-      FROM orders
-      JOIN order_items ON orders.id = order_items.order_id
-      WHERE orders.user_id = $1
-      ORDER BY orders.created_at DESC`,
+        `SELECT
+    orders.id AS order_id,
+    orders.total_price,
+    orders.created_at,
+    order_items.status,
+    order_items.id AS order_item_id,
+    order_items.product_name,
+    order_items.price,
+    order_items.picture,
+    order_items.quantity
+  FROM orders
+  JOIN order_items ON orders.id = order_items.order_id
+  WHERE orders.user_id = $1
+  AND order_items.hidden_from_buyer = false
+  ORDER BY orders.created_at DESC`,
       [userId]
     );
 
@@ -348,23 +349,120 @@ app.patch("/seller/order-items/:orderItemId", async (req, res) => {
   const { orderItemId } = req.params;
   const { status } = req.body;
 
+  const allowedStatuses = ["Ordered", "Shipped", "Delivered"];
+
+  if (!allowedStatuses.includes(status)) {
+    res.status(400).json({ message: "Invalid status" });
+    return;
+  }
+
+  const client = await pool.connect();
+
   try {
-    const result = await pool.query(
-      `UPDATE order_items
-       SET status = $1
-       WHERE id = $2
-       RETURNING *`,
-      [status, orderItemId]
+    await client.query("BEGIN");
+
+    const itemResult = await client.query(
+      `SELECT *
+       FROM order_items
+       WHERE id = $1
+       FOR UPDATE`,
+      [orderItemId]
     );
 
-    res.json(result.rows[0]);
+    if (itemResult.rows.length === 0) {
+      await client.query("ROLLBACK");
+      res.status(404).json({ message: "Order item not found" });
+      return;
+    }
+
+    const item = itemResult.rows[0];
+
+    if (item.status === "Delivered") {
+      await client.query("ROLLBACK");
+      res.status(400).json({ message: "Order item already delivered" });
+      return;
+    }
+
+    let updatedItem;
+
+    if (status === "Delivered") {
+      const sellerAmount = Number(item.price) * Number(item.quantity);
+
+      await client.query(
+        `UPDATE users
+         SET balance = balance + $1
+         WHERE id = $2`,
+        [sellerAmount, item.seller_id]
+      );
+
+      const updateResult = await client.query(
+        `UPDATE order_items
+         SET status = $1,
+             delivered_at = NOW(),
+             hidden_from_buyer = true
+         WHERE id = $2
+         RETURNING *`,
+        [status, orderItemId]
+      );
+
+      updatedItem = updateResult.rows[0];
+    } else {
+      const updateResult = await client.query(
+        `UPDATE order_items
+         SET status = $1
+         WHERE id = $2
+         RETURNING *`,
+        [status, orderItemId]
+      );
+
+      updatedItem = updateResult.rows[0];
+    }
+
+    await client.query("COMMIT");
+
+    res.json({
+      message:
+        status === "Delivered"
+          ? "Order delivered, money added to seller balance, item hidden from buyer"
+          : "Order status updated",
+      orderItem: updatedItem,
+    });
   } catch (error) {
+    await client.query("ROLLBACK");
     console.error("UPDATE ORDER ITEM STATUS ERROR:", error);
+
     res.status(500).json({
       message: "Failed to update order item status",
     });
+  } finally {
+    client.release();
   }
 });
+
+app.get("/seller/balance/:sellerId", async (req, res) => {
+  const { sellerId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT id, username, balance
+       FROM users
+       WHERE id = $1`,
+      [sellerId]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ message: "Seller not found" });
+      return;
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("GET SELLER BALANCE ERROR:", error);
+    res.status(500).json({ message: "Failed to get seller balance" });
+  }
+});
+
+
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
